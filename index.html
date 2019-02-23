@@ -57,8 +57,6 @@ div.tooltip {
     <p id="sunrise">Sunrise: </p>
     <p id="sunset">Sunset: </p>
     <p id="dayLen">Day duration: </p>
-
-    <!-- <canvas id="myCanvas" width="1050" height="300" style="border:1px solid #d3d3d3;">  -->
       
         <script>
             var aSunDataSR = []; 
@@ -113,7 +111,7 @@ div.tooltip {
                 console.log(sunRise);
 
                 let daysSpan = document.getElementById("dSpan").value;
-                // drawAll(oDate, daysSpan, context);
+              
                 getData(oDate, daysSpan, context);
             };
 
@@ -133,50 +131,6 @@ div.tooltip {
             for (var i = 0; i < options.length; i++) {
                 var opt = options[i][0];
                 select.innerHTML += "<option value=\"" + opt + "\">" + opt + "</option>";
-            };
-
-
-
-            function drawSTPoint(x, y) {
-                var c = document.getElementById("myCanvas");
-                var ctx = c.getContext("2d");
-
-                ctx.beginPath();
-                ctx.arc(x, y, 2, 0, 2 * Math.PI);
-
-                ctx.stroke();
-            };
-
-            function drawSTPoint1(x, y) {
-                // var circle = canvas.append("circle").attr("cx",x).attr("cy",y).attr("r",2).attr("fill","blue");
-            };
-
-            function drawAll(oDate1, daysSpan,context) {
-                var i;
-                let oYear = oDate1.getFullYear();
-                let oMonth = oDate1.getMonth();
-                oMonth = oMonth + 1;
-                let oDay = oDate1.getDate();
-                let oDate = oDate1;
-                for (i = 0; i < daysSpan; i++) {
-
-                    //oDate.addDays(i);
-
-                    oDate.setDate(oDate1.getDate() + 1);
-
-                    oYear = oDate.getFullYear();
-                    oMonth = oDate.getMonth();
-                    oMonth = oMonth + 1;
-                    oDay = oDate.getDate();
-
-                    oLocation1 = new Location("Poznan", oYear, oMonth, oDay, 52.408333, 16.934167, 0, 0, 1, 0);
-                    oDay = oDay + 1;
-                    sunRise = oLocation1.get_sunRise_raw();
-                    sunSet = oLocation1.get_sunSet();
-
-                     drawSTPoint1(i * 10, sunRise * 25);
-                }
-
             };
 
             function getData(oDate1, daysSpan,context) {
@@ -216,7 +170,7 @@ div.tooltip {
                    
                 }
 
-            };
+          
 
 // D3
 var margin = {top: 30, right: 20, bottom: 30, left: 50},
@@ -339,6 +293,7 @@ var data = aSunDataSR;
     svg.append("g")
         .attr("class", "y axis")
         .call(yAxis);
+    };
         </script>
 
 </body>
