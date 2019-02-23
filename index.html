@@ -2,6 +2,7 @@
 <html>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script src="https://d3js.org/d3.v3.min.js"></script>
+<script src="https://d3js.org/d3-scale.v2.min.js"></script>
 <script src="suntime.lib.js"></script>
 <meta charset="utf-8">
 <style> /* set the CSS */
@@ -180,7 +181,7 @@ div.tooltip {
 
             function getData(oDate1, daysSpan,context) {
                 var i;
-                var sunData = {x:0,y:0,sR:0,sS:0,date:""};
+                var sunData = {x:0,y:0,sEvent:0,date:""};
                 let oYear = oDate1.getFullYear();
                 let oMonth = oDate1.getMonth();
                 oMonth = oMonth + 1;
@@ -200,16 +201,18 @@ div.tooltip {
                     oLocation1 = new Location("Poznan", oYear, oMonth, oDay, 52.408333, 16.934167, 0, 0, 1, 0);
                     oDay = oDay + 1;
                     sunRise = oLocation1.get_sunRise_raw();
-                    sunSet = oLocation1.get_sunSet();
+                    sunSet = oLocation1.get_sunSet_raw();
 
                     sunData.x = i * 10;
-                    sunData.y = sunRise * 25;
-                    sunData.sR = sunRise;
-                    sunData.sS = sunSet;
+                    sunData.y = sunRise ;
+                    sunData.sEvent = sunRise;
                     sunData.date =  oDay.toString() + "-"+ oMonth.toString() +  "-"+ oYear.toString();
-                    aSunDataSR.push([sunData.x,sunData.y,sunData.sR,sunData.date]);
-                    sunData.y = sunSet * 25;
-                    aSunDataSS.push([sunData.x,sunData.y,sunData.sS,sunData.date]);
+                    aSunDataSR.push([sunData.x,sunData.y,sunData.sEvent,sunData.date]);
+
+                    sunData.x = i * 10;
+                    sunData.y = sunSet  ;
+                    sunData.sEvent = sunSet;
+                    aSunDataSS.push([sunData.x,sunData.y,sunData.sEvent,sunData.date]);
                    
                 }
 
@@ -218,11 +221,12 @@ div.tooltip {
 // D3
 var margin = {top: 30, right: 20, bottom: 30, left: 50},
     width = 1200 - margin.left - margin.right,
-    height = 270 - margin.top - margin.bottom;
+    height = 470 - margin.top - margin.bottom;
 
 // Set the ranges
 var x = d3.time.scale().range([0, width]);
-var y = d3.scale.linear().range([height, 0]);
+var y = d3.scale.linear().range([height,0]);
+//var y = d3.scaleLinear([0.24]).domain([0, 24]).range([height,0]);
 
 // Define the axes
 var xAxis = d3.svg.axis().scale(x)
@@ -269,8 +273,9 @@ var data = aSunDataSR;
          d.date = d[3];
      });    
     // Scale the range of the data
-    x.domain(d3.extent(data, function(d) { return d.x; }));
-    y.domain([0, d3.max(data, function(d) { return d.y; })]);
+    x.domain(d3.extent(data1, function(d) { return d.x; }));
+   // y.domain([0, d3.max(data1, function(d) { return d.y; })]);
+   y.domain([0, 24]);
 
     // Add the valueline path.
     svg.append("path")
@@ -299,6 +304,12 @@ var data = aSunDataSR;
         });
 
  // Add the scatterplot  - SS
+
+ // Add the valueline path.
+ svg.append("path")
+        .attr("class", "line")
+        .attr("d", valueline(data1));
+
     svg.selectAll("dot")	
         .data(data1)			
     .enter().append("circle")								
