@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://d3js.org/d3.v3.min.js"></script>
+<script src="suntime.lib.js"></script>
+<meta charset="utf-8">
+<style> /* set the CSS */
+
+body { font: 12px Arial;}
+
+path { 
+    stroke: steelblue;
+    stroke-width: 2;
+    fill: none;
+}
+
+.axis path,
+.axis line {
+    fill: none;
+    stroke: grey;
+    stroke-width: 1;
+    shape-rendering: crispEdges;
+}
+
+div.tooltip {	
+    position: absolute;			
+    text-align: center;			
+    width: 60px;					
+    height: 28px;					
+    padding: 2px;				
+    font: 12px sans-serif;		
+    background: lightsteelblue;	
+    border: 0px;		
+    border-radius: 8px;			
+    pointer-events: none;			
+}
+
+</style>
+
+<body>
+
+    <p>Enter a number and click OK:</p>
+
+    <input id="inputDate" type="date" required>
+
+
+    <select id="myselect">
+        <option value="volvo">Volvo</option>
+        <input id="dSpan" type="number" value="100" text="Days span">
+    </select>
+    <button onclick="myFunction(this)">OK</button>
+
+
+    <p>Suntime</p>
+
+    <p id="sunrise">Sunrise: </p>
+    <p id="sunset">Sunset: </p>
+    <p id="dayLen">Day duration: </p>
+
+    <!-- <canvas id="myCanvas" width="1050" height="300" style="border:1px solid #d3d3d3;">  -->
+      
+        <script>
+            var aSunDataSR = []; 
+            var aSunDataSS = []; 
+
+            function setDateMIK() {
+                var mikDate = new Date();
+
+                var mikMM = 0;
+                if (
+                    mikDate.getMonth() < 8
+                ) {
+                    mikMM = mikDate.getMonth() + 1;
+                    mikMM = "0" + mikMM;
+                } else {
+                    mikMM = mikDate.getMonth() + 1;
+                }
+
+                let formatted_date = mikDate.getFullYear() + "-" + mikMM + "-" + mikDate.getDate()
+                document.getElementById('inputDate').value = formatted_date;
+            };
+            window.onload = setDateMIK();
+
+            let PrefixSR = "Sunrise:";
+            let PrefixSS = "Sunset:";
+            let PrefixDD = "Day duration:";
+
+            function myFunction(context) {
+
+
+                let oDate = new Date(document.getElementById("inputDate").value);
+
+                let oYear = oDate.getFullYear();
+                let oMonth = oDate.getMonth();
+                oMonth = oMonth + 1;
+                let oDay = oDate.getDate();
+
+                let aLocations = [
+                    ["Poznan", 52.408333, 16.934167]
+                    ["Grybow", 49.624444, 20.948333]
+                ];
+
+                let oLocation1 = new Location("Poznan", oYear, oMonth, oDay, 52.408333, 16.934167, 0, 0, 1, 0);
+
+                let sunRise = oLocation1.get_sunRise();
+                let sunSet = oLocation1.get_sunSet();
+                let dayLen = oLocation1.getDayLen();
+
+                document.getElementById("sunrise").innerHTML = PrefixSR + sunRise[0] + ":" + sunRise[1];
+                document.getElementById("sunset").innerHTML = PrefixSS + sunSet[0] + ":" + sunSet[1];
+                document.getElementById("dayLen").innerHTML = PrefixDD + dayLen[0] + ":" + dayLen[1];
+                console.log(sunRise);
+
+                let daysSpan = document.getElementById("dSpan").value;
+                // drawAll(oDate, daysSpan, context);
+                getData(oDate, daysSpan, context);
+            };
+
+            (function init() {
+                myFunction();
+            })();
+
+
+            var select = document.getElementById("myselect");
+            var options = [
+                ["Poznan", 52.408333, 16.934167], ["Grybow", 49.624444, 20.948333]
+            ];
+
+            // Optional: Clear all existing options first:
+            select.innerHTML = "";
+            // Populate list with options:
+            for (var i = 0; i < options.length; i++) {
+                var opt = options[i][0];
+                select.innerHTML += "<option value=\"" + opt + "\">" + opt + "</option>";
+            };
+
+
+
+            function drawSTPoint(x, y) {
+                var c = document.getElementById("myCanvas");
+                var ctx = c.getContext("2d");
+
+                ctx.beginPath();
+                ctx.arc(x, y, 2, 0, 2 * Math.PI);
+
+                ctx.stroke();
+            };
+
+            function drawSTPoint1(x, y) {
+                // var circle = canvas.append("circle").attr("cx",x).attr("cy",y).attr("r",2).attr("fill","blue");
+            };
+
+            function drawAll(oDate1, daysSpan,context) {
+                var i;
+                let oYear = oDate1.getFullYear();
+                let oMonth = oDate1.getMonth();
+                oMonth = oMonth + 1;
+                let oDay = oDate1.getDate();
+                let oDate = oDate1;
+                for (i = 0; i < daysSpan; i++) {
+
+                    //oDate.addDays(i);
+
+                    oDate.setDate(oDate1.getDate() + 1);
+
+                    oYear = oDate.getFullYear();
+                    oMonth = oDate.getMonth();
+                    oMonth = oMonth + 1;
+                    oDay = oDate.getDate();
+
+                    oLocation1 = new Location("Poznan", oYear, oMonth, oDay, 52.408333, 16.934167, 0, 0, 1, 0);
+                    oDay = oDay + 1;
+                    sunRise = oLocation1.get_sunRise_raw();
+                    sunSet = oLocation1.get_sunSet();
+
+                     drawSTPoint1(i * 10, sunRise * 25);
+                }
+
+            };
+
+            function getData(oDate1, daysSpan,context) {
+                var i;
+                var sunData = {x:0,y:0,sR:0,sS:0,date:""};
+                let oYear = oDate1.getFullYear();
+                let oMonth = oDate1.getMonth();
+                oMonth = oMonth + 1;
+                let oDay = oDate1.getDate();
+                let oDate = oDate1;
+                for (i = 0; i < daysSpan; i++) {
+
+                    //oDate.addDays(i);
+
+                    oDate.setDate(oDate1.getDate() + 1);
+
+                    oYear = oDate.getFullYear();
+                    oMonth = oDate.getMonth();
+                    oMonth = oMonth + 1;
+                    oDay = oDate.getDate();
+
+                    oLocation1 = new Location("Poznan", oYear, oMonth, oDay, 52.408333, 16.934167, 0, 0, 1, 0);
+                    oDay = oDay + 1;
+                    sunRise = oLocation1.get_sunRise_raw();
+                    sunSet = oLocation1.get_sunSet();
+
+                    sunData.x = i * 10;
+                    sunData.y = sunRise * 25;
+                    sunData.sR = sunRise;
+                    sunData.sS = sunSet;
+                    sunData.date =  oDay.toString() + "-"+ oMonth.toString() +  "-"+ oYear.toString();
+                    aSunDataSR.push([sunData.x,sunData.y,sunData.sR,sunData.date]);
+                    sunData.y = sunSet * 25;
+                    aSunDataSS.push([sunData.x,sunData.y,sunData.sS,sunData.date]);
+                   
+                }
+
+            };
+
+// D3
+var margin = {top: 30, right: 20, bottom: 30, left: 50},
+    width = 1200 - margin.left - margin.right,
+    height = 270 - margin.top - margin.bottom;
+
+// Set the ranges
+var x = d3.time.scale().range([0, width]);
+var y = d3.scale.linear().range([height, 0]);
+
+// Define the axes
+var xAxis = d3.svg.axis().scale(x)
+    .orient("bottom").ticks(5);
+
+var yAxis = d3.svg.axis().scale(y)
+    .orient("left").ticks(5);
+
+// Define the line
+var valueline = d3.svg.line()
+    .x(function(d) { return x(d.x); })
+    .y(function(d) { return y(d.y); });
+
+// Define the div for the tooltip
+var div = d3.select("body").append("div")	
+    .attr("class", "tooltip")				
+    .style("opacity", 0);
+
+// Adds the svg canvas
+var svg = d3.select("body")
+    .append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+        .attr("transform", 
+              "translate(" + margin.left + "," + margin.top + ")");
+
+// Get the data
+var data = aSunDataSR;
+
+ data.forEach(function(d) {
+         d.x = d[0];
+         d.y = d[1];
+         d.sR = d[2];
+         d.date = d[3];
+     });
+
+ var data1 = aSunDataSS;
+
+ data1.forEach(function(d) {
+         d.x = d[0];
+         d.y = d[1];
+         d.sS = d[2];
+         d.date = d[3];
+     });    
+    // Scale the range of the data
+    x.domain(d3.extent(data, function(d) { return d.x; }));
+    y.domain([0, d3.max(data, function(d) { return d.y; })]);
+
+    // Add the valueline path.
+    svg.append("path")
+        .attr("class", "line")
+        .attr("d", valueline(data));
+
+    // Add the scatterplot
+    svg.selectAll("dot")	
+        .data(data)			
+    .enter().append("circle")								
+        .attr("r", 4).attr("fill","blue")		
+        .attr("cx", function(d) { return x(d.x); })		 
+        .attr("cy", function(d) { return y(d.y); })		
+        .on("mouseover", function(d) {		
+            div.transition()		
+                .duration(200)		
+                .style("opacity", .9);		
+            div	.html(d.sR + "<br/>"  + d.date )	
+                .style("left", (d3.event.pageX) + "px")		
+                .style("top", (d3.event.pageY - 28) + "px");	
+            })					
+        .on("mouseout", function(d) {		
+            div.transition()		
+                .duration(500)		
+                .style("opacity", 0);	
+        });
+
+ // Add the scatterplot  - SS
+    svg.selectAll("dot")	
+        .data(data1)			
+    .enter().append("circle")								
+        .attr("r", 4).attr("fill","red")		
+        .attr("cx", function(d) { return x(d.x); })		 
+        .attr("cy", function(d) { return y(d.y); })		
+        .on("mouseover", function(d) {		
+            div.transition()		
+                .duration(200)		
+                .style("opacity", .9);		
+            div	.html(d.sS + "<br/>"  + d.date )	
+                .style("left", (d3.event.pageX) + "px")		
+                .style("top", (d3.event.pageY - 28) + "px");	
+            })					
+        .on("mouseout", function(d) {		
+            div.transition()		
+                .duration(500)		
+                .style("opacity", 0);	
+        });
+    // Add the X Axis
+    svg.append("g")
+        .attr("class", "x axis")
+        .attr("transform", "translate(0," + height + ")")
+        .call(xAxis);
+
+    // Add the Y Axis
+    svg.append("g")
+        .attr("class", "y axis")
+        .call(yAxis);
+        </script>
+
+</body>
+
+</html>
