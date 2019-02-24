@@ -154,17 +154,20 @@ div.tooltip {
 
                     oLocation1 = new Location("Poznan", oYear, oMonth, oDay, 52.408333, 16.934167, 0, 0, 1, 0);
                     oDay = oDay + 1;
-                    sunRise = oLocation1.get_sunRise_raw();
-                    sunSet = oLocation1.get_sunSet_raw();
+                    sunRiseRaw = oLocation1.get_sunRise_raw();
+                    sunSetRaw = oLocation1.get_sunSet_raw();
+                    sunRise = oLocation1.get_sunRise();
+                    sunSet = oLocation1.get_sunSet();
+
 
                     sunData.x = i * 10;
-                    sunData.y = sunRise ;
+                    sunData.y = sunRiseRaw ;
                     sunData.sEvent = sunRise;
                     sunData.date =  oDay.toString() + "-"+ oMonth.toString() +  "-"+ oYear.toString();
                     aSunDataSR.push([sunData.x,sunData.y,sunData.sEvent,sunData.date]);
 
                     sunData.x = i * 10;
-                    sunData.y = sunSet  ;
+                    sunData.y = sunSetRaw  ;
                     sunData.sEvent = sunSet;
                     aSunDataSS.push([sunData.x,sunData.y,sunData.sEvent,sunData.date]);
                    
@@ -173,14 +176,7 @@ div.tooltip {
           
 
 // D3
-//delete margin,
-//xAxis,yAxis,
-//d3.svg.line().remove();
 d3.select("svg").remove(); 
-
-
-//,div,data,data1;
-
 
 var margin = {top: 30, right: 20, bottom: 30, left: 50},
     width = 1200 - margin.left - margin.right,
