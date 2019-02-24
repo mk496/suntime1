@@ -45,7 +45,7 @@
 
 <body>
 
-    <p>Enter a number and click OK:</p>
+    <p><b>Sunrise/set times</b></p>
 
     <input id="inputDate" type="date" required>
 
@@ -99,9 +99,13 @@
 
             this.locationsJSON = locations;
 
-            //let oLocation1 = new Location("Poznan", oYear, oMonth, oDay, 52.408333, 16.934167, 0, 0, 1, 0);
-            let oLocation1 = new Location(this.locationsJSON[0].city, oYear, oMonth, oDay,  this.locationsJSON[0].latitude, 
-            this.locationsJSON[0].longitude, 0, 0, this.locationsJSON[0].timeZone, 0);
+            var selectedOption = 0;
+            if (this.select != null) {
+                selectedOption = this.select.selectedIndex;
+            }
+
+            let oLocation1 = new Location(this.locationsJSON[selectedOption].city, oYear, oMonth, oDay, this.locationsJSON[selectedOption].latitude,
+                this.locationsJSON[selectedOption].longitude, 0, 0, this.locationsJSON[selectedOption].timeZone, 0);
 
             let sunRise = oLocation1.get_sunRise();
             let sunSet = oLocation1.get_sunSet();
@@ -113,13 +117,13 @@
             console.log(sunRise);
 
             let daysSpan = document.getElementById("dSpan").value;
-            
+
             var selectedOption = 0;
-            if( this.select != null){
+            if (this.select != null) {
                 selectedOption = this.select.selectedIndex;
             }
 
-            getData(oDate, daysSpan, this, selectedOption );
+            getData(oDate, daysSpan, this, selectedOption);
         };
 
         (function init() {
@@ -160,9 +164,9 @@
                 oMonth = oMonth + 1;
                 oDay = oDate.getDate();
 
-               // oLocation1 = new Location("Poznan", oYear, oMonth, oDay, 52.408333, 16.934167, 0, 0, 1, 0);
-               oLocation1 = new Location(context.locationsJSON[locationIndex].city, oYear, oMonth, oDay, context.locationsJSON[locationIndex].latitude, 
-               context.locationsJSON[locationIndex].longitude, 0, 0, context.locationsJSON[locationIndex].timeZone, 0);
+                // oLocation1 = new Location("Poznan", oYear, oMonth, oDay, 52.408333, 16.934167, 0, 0, 1, 0);
+                oLocation1 = new Location(context.locationsJSON[locationIndex].city, oYear, oMonth, oDay, context.locationsJSON[locationIndex].latitude,
+                    context.locationsJSON[locationIndex].longitude, 0, 0, context.locationsJSON[locationIndex].timeZone, 0);
                 oDay = oDay + 1;
                 sunRiseRaw = oLocation1.get_sunRise_raw();
                 sunSetRaw = oLocation1.get_sunSet_raw();
