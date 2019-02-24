@@ -97,10 +97,11 @@
             oMonth = oMonth + 1;
             let oDay = oDate.getDate();
 
-            let locationsJSON = locations;
+            this.locationsJSON = locations;
 
             //let oLocation1 = new Location("Poznan", oYear, oMonth, oDay, 52.408333, 16.934167, 0, 0, 1, 0);
-            let oLocation1 = new Location("Poznan", oYear, oMonth, oDay,  locationsJSON[0].latitude, locationsJSON[0].longitude, 0, 0, locationsJSON[0].timeZone, 0);
+            let oLocation1 = new Location(this.locationsJSON[0].city, oYear, oMonth, oDay,  this.locationsJSON[0].latitude, 
+            this.locationsJSON[0].longitude, 0, 0, this.locationsJSON[0].timeZone, 0);
 
             let sunRise = oLocation1.get_sunRise();
             let sunSet = oLocation1.get_sunSet();
@@ -112,8 +113,13 @@
             console.log(sunRise);
 
             let daysSpan = document.getElementById("dSpan").value;
+            
+            var selectedOption = 0;
+            if( this.select != null){
+                selectedOption = this.select.selectedIndex;
+            }
 
-            getData(oDate, daysSpan, context);
+            getData(oDate, daysSpan, this, selectedOption );
         };
 
         (function init() {
@@ -121,20 +127,21 @@
         })();
 
 
-        var select = document.getElementById("myselect");
-        var options = [
-            ["Poznan", 52.408333, 16.934167], ["Grybow", 49.624444, 20.948333]
-        ];
+        this.select = document.getElementById("myselect");
+        // var options = [
+        //     ["Poznan", 52.408333, 16.934167], ["Grybow", 49.624444, 20.948333]
+        // ];
+        var options = this.locationsJSON
 
         // Optional: Clear all existing options first:
-        select.innerHTML = "";
+        this.select.innerHTML = "";
         // Populate list with options:
         for (var i = 0; i < options.length; i++) {
-            var opt = options[i][0];
-            select.innerHTML += "<option value=\"" + opt + "\">" + opt + "</option>";
+            var opt = options[i].city;
+            this.select.innerHTML += "<option value=\"" + opt + "\">" + opt + "</option>";
         };
 
-        function getData(oDate1, daysSpan, context) {
+        function getData(oDate1, daysSpan, context, locationIndex) {
             var i;
             var sunData = { x: 0, y: 0, sEvent: 0, date: "" };
             let oYear = oDate1.getFullYear();
@@ -153,7 +160,9 @@
                 oMonth = oMonth + 1;
                 oDay = oDate.getDate();
 
-                oLocation1 = new Location("Poznan", oYear, oMonth, oDay, 52.408333, 16.934167, 0, 0, 1, 0);
+               // oLocation1 = new Location("Poznan", oYear, oMonth, oDay, 52.408333, 16.934167, 0, 0, 1, 0);
+               oLocation1 = new Location(context.locationsJSON[locationIndex].city, oYear, oMonth, oDay, context.locationsJSON[locationIndex].latitude, 
+               context.locationsJSON[locationIndex].longitude, 0, 0, context.locationsJSON[locationIndex].timeZone, 0);
                 oDay = oDay + 1;
                 sunRiseRaw = oLocation1.get_sunRise_raw();
                 sunSetRaw = oLocation1.get_sunSet_raw();
