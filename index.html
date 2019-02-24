@@ -4,38 +4,43 @@
 <script src="https://d3js.org/d3.v3.min.js"></script>
 <script src="https://d3js.org/d3-scale.v2.min.js"></script>
 <script src="suntime.lib.js"></script>
+
+<script type="text/javascript" src="locations.json"></script>
+
 <meta charset="utf-8">
-<style> /* set the CSS */
+<style>
+    /* set the CSS */
 
-body { font: 12px Arial;}
+    body {
+        font: 12px Arial;
+    }
 
-path { 
-    stroke: steelblue;
-    stroke-width: 2;
-    fill: none;
-}
+    path {
+        stroke: steelblue;
+        stroke-width: 2;
+        fill: none;
+    }
 
-.axis path,
-.axis line {
-    fill: none;
-    stroke: grey;
-    stroke-width: 1;
-    shape-rendering: crispEdges;
-}
+    .axis path,
+    .axis line {
+        fill: none;
+        stroke: grey;
+        stroke-width: 1;
+        shape-rendering: crispEdges;
+    }
 
-div.tooltip {	
-    position: absolute;			
-    text-align: center;			
-    width: 60px;					
-    height: 28px;					
-    padding: 2px;				
-    font: 12px sans-serif;		
-    background: lightsteelblue;	
-    border: 0px;		
-    border-radius: 8px;			
-    pointer-events: none;			
-}
-
+    div.tooltip {
+        position: absolute;
+        text-align: center;
+        width: 60px;
+        height: 28px;
+        padding: 2px;
+        font: 12px sans-serif;
+        background: lightsteelblue;
+        border: 0px;
+        border-radius: 8px;
+        pointer-events: none;
+    }
 </style>
 
 <body>
@@ -50,264 +55,260 @@ div.tooltip {
         <input id="dSpan" type="number" value="200" text="Days span">
     </select>
     <button onclick="myFunction(this)">OK</button>
-
-
     <p>Suntime</p>
 
     <p id="sunrise">Sunrise: </p>
     <p id="sunset">Sunset: </p>
     <p id="dayLen">Day duration: </p>
-      
-        <script>
-            var aSunDataSR = []; 
-            var aSunDataSS = []; 
 
-            function setDateMIK() {
-                var mikDate = new Date();
+    <script>
+        var aSunDataSR = [];
+        var aSunDataSS = [];
 
-                var mikMM = 0;
-                if (
-                    mikDate.getMonth() < 8
-                ) {
-                    mikMM = mikDate.getMonth() + 1;
-                    mikMM = "0" + mikMM;
-                } else {
-                    mikMM = mikDate.getMonth() + 1;
-                }
+        function setDateMIK() {
+            var mikDate = new Date();
 
-                let formatted_date = mikDate.getFullYear() + "-" + mikMM + "-" + mikDate.getDate()
-                document.getElementById('inputDate').value = formatted_date;
-            };
-            window.onload = setDateMIK();
+            var mikMM = 0;
+            if (
+                mikDate.getMonth() < 8
+            ) {
+                mikMM = mikDate.getMonth() + 1;
+                mikMM = "0" + mikMM;
+            } else {
+                mikMM = mikDate.getMonth() + 1;
+            }
 
-            let PrefixSR = "Sunrise:";
-            let PrefixSS = "Sunset:";
-            let PrefixDD = "Day duration:";
+            let formatted_date = mikDate.getFullYear() + "-" + mikMM + "-" + mikDate.getDate()
+            document.getElementById('inputDate').value = formatted_date;
+        };
+        window.onload = setDateMIK();
 
-            function myFunction(context) {
+        let PrefixSR = "Sunrise:";
+        let PrefixSS = "Sunset:";
+        let PrefixDD = "Day duration:";
+
+        function myFunction(context) {
 
 
-                let oDate = new Date(document.getElementById("inputDate").value);
+            let oDate = new Date(document.getElementById("inputDate").value);
 
-                let oYear = oDate.getFullYear();
-                let oMonth = oDate.getMonth();
+            let oYear = oDate.getFullYear();
+            let oMonth = oDate.getMonth();
+            oMonth = oMonth + 1;
+            let oDay = oDate.getDate();
+
+            let locationsJSON = locations;
+
+            //let oLocation1 = new Location("Poznan", oYear, oMonth, oDay, 52.408333, 16.934167, 0, 0, 1, 0);
+            let oLocation1 = new Location("Poznan", oYear, oMonth, oDay,  locationsJSON[0].latitude, locationsJSON[0].longitude, 0, 0, locationsJSON[0].timeZone, 0);
+
+            let sunRise = oLocation1.get_sunRise();
+            let sunSet = oLocation1.get_sunSet();
+            let dayLen = oLocation1.getDayLen();
+
+            document.getElementById("sunrise").innerHTML = PrefixSR + sunRise[0] + ":" + sunRise[1];
+            document.getElementById("sunset").innerHTML = PrefixSS + sunSet[0] + ":" + sunSet[1];
+            document.getElementById("dayLen").innerHTML = PrefixDD + dayLen[0] + ":" + dayLen[1];
+            console.log(sunRise);
+
+            let daysSpan = document.getElementById("dSpan").value;
+
+            getData(oDate, daysSpan, context);
+        };
+
+        (function init() {
+            myFunction();
+        })();
+
+
+        var select = document.getElementById("myselect");
+        var options = [
+            ["Poznan", 52.408333, 16.934167], ["Grybow", 49.624444, 20.948333]
+        ];
+
+        // Optional: Clear all existing options first:
+        select.innerHTML = "";
+        // Populate list with options:
+        for (var i = 0; i < options.length; i++) {
+            var opt = options[i][0];
+            select.innerHTML += "<option value=\"" + opt + "\">" + opt + "</option>";
+        };
+
+        function getData(oDate1, daysSpan, context) {
+            var i;
+            var sunData = { x: 0, y: 0, sEvent: 0, date: "" };
+            let oYear = oDate1.getFullYear();
+            let oMonth = oDate1.getMonth();
+            oMonth = oMonth + 1;
+            let oDay = oDate1.getDate();
+            let oDate = oDate1;
+            for (i = 0; i < daysSpan; i++) {
+
+                //oDate.addDays(i);
+
+                oDate.setDate(oDate1.getDate() + 1);
+
+                oYear = oDate.getFullYear();
+                oMonth = oDate.getMonth();
                 oMonth = oMonth + 1;
-                let oDay = oDate.getDate();
+                oDay = oDate.getDate();
 
-                let aLocations = [
-                    ["Poznan", 52.408333, 16.934167]
-                    ["Grybow", 49.624444, 20.948333]
-                ];
-
-                let oLocation1 = new Location("Poznan", oYear, oMonth, oDay, 52.408333, 16.934167, 0, 0, 1, 0);
-
-                let sunRise = oLocation1.get_sunRise();
-                let sunSet = oLocation1.get_sunSet();
-                let dayLen = oLocation1.getDayLen();
-
-                document.getElementById("sunrise").innerHTML = PrefixSR + sunRise[0] + ":" + sunRise[1];
-                document.getElementById("sunset").innerHTML = PrefixSS + sunSet[0] + ":" + sunSet[1];
-                document.getElementById("dayLen").innerHTML = PrefixDD + dayLen[0] + ":" + dayLen[1];
-                console.log(sunRise);
-
-                let daysSpan = document.getElementById("dSpan").value;
-              
-                getData(oDate, daysSpan, context);
-            };
-
-            (function init() {
-                myFunction();
-            })();
+                oLocation1 = new Location("Poznan", oYear, oMonth, oDay, 52.408333, 16.934167, 0, 0, 1, 0);
+                oDay = oDay + 1;
+                sunRiseRaw = oLocation1.get_sunRise_raw();
+                sunSetRaw = oLocation1.get_sunSet_raw();
+                sunRise = oLocation1.get_sunRise();
+                sunSet = oLocation1.get_sunSet();
 
 
-            var select = document.getElementById("myselect");
-            var options = [
-                ["Poznan", 52.408333, 16.934167], ["Grybow", 49.624444, 20.948333]
-            ];
+                sunData.x = i * 10;
+                sunData.y = sunRiseRaw;
+                sunData.sEvent = sunRise;
+                sunData.date = oDay.toString() + "-" + oMonth.toString() + "-" + oYear.toString();
+                aSunDataSR.push([sunData.x, sunData.y, sunData.sEvent, sunData.date]);
 
-            // Optional: Clear all existing options first:
-            select.innerHTML = "";
-            // Populate list with options:
-            for (var i = 0; i < options.length; i++) {
-                var opt = options[i][0];
-                select.innerHTML += "<option value=\"" + opt + "\">" + opt + "</option>";
-            };
+                sunData.x = i * 10;
+                sunData.y = sunSetRaw;
+                sunData.sEvent = sunSet;
+                aSunDataSS.push([sunData.x, sunData.y, sunData.sEvent, sunData.date]);
 
-            function getData(oDate1, daysSpan,context) {
-                var i;
-                var sunData = {x:0,y:0,sEvent:0,date:""};
-                let oYear = oDate1.getFullYear();
-                let oMonth = oDate1.getMonth();
-                oMonth = oMonth + 1;
-                let oDay = oDate1.getDate();
-                let oDate = oDate1;
-                for (i = 0; i < daysSpan; i++) {
-
-                    //oDate.addDays(i);
-
-                    oDate.setDate(oDate1.getDate() + 1);
-
-                    oYear = oDate.getFullYear();
-                    oMonth = oDate.getMonth();
-                    oMonth = oMonth + 1;
-                    oDay = oDate.getDate();
-
-                    oLocation1 = new Location("Poznan", oYear, oMonth, oDay, 52.408333, 16.934167, 0, 0, 1, 0);
-                    oDay = oDay + 1;
-                    sunRiseRaw = oLocation1.get_sunRise_raw();
-                    sunSetRaw = oLocation1.get_sunSet_raw();
-                    sunRise = oLocation1.get_sunRise();
-                    sunSet = oLocation1.get_sunSet();
+            }
 
 
-                    sunData.x = i * 10;
-                    sunData.y = sunRiseRaw ;
-                    sunData.sEvent = sunRise;
-                    sunData.date =  oDay.toString() + "-"+ oMonth.toString() +  "-"+ oYear.toString();
-                    aSunDataSR.push([sunData.x,sunData.y,sunData.sEvent,sunData.date]);
 
-                    sunData.x = i * 10;
-                    sunData.y = sunSetRaw  ;
-                    sunData.sEvent = sunSet;
-                    aSunDataSS.push([sunData.x,sunData.y,sunData.sEvent,sunData.date]);
-                   
-                }
+            // D3
+            d3.select("svg").remove();
 
-          
+            var margin = { top: 30, right: 20, bottom: 30, left: 50 },
+                width = 1200 - margin.left - margin.right,
+                height = 470 - margin.top - margin.bottom;
 
-// D3
-d3.select("svg").remove(); 
+            // Set the ranges
+            var x = d3.time.scale().range([0, width]);
+            var y = d3.scale.linear().range([height, 0]);
+            //var y = d3.scaleLinear([0.24]).domain([0, 24]).range([height,0]);
 
-var margin = {top: 30, right: 20, bottom: 30, left: 50},
-    width = 1200 - margin.left - margin.right,
-    height = 470 - margin.top - margin.bottom;
+            // Define the axes
+            var xAxis = d3.svg.axis().scale(x)
+                .orient("bottom").ticks(5);
 
-// Set the ranges
-var x = d3.time.scale().range([0, width]);
-var y = d3.scale.linear().range([height,0]);
-//var y = d3.scaleLinear([0.24]).domain([0, 24]).range([height,0]);
+            var yAxis = d3.svg.axis().scale(y)
+                .orient("left").ticks(5);
 
-// Define the axes
-var xAxis = d3.svg.axis().scale(x)
-    .orient("bottom").ticks(5);
+            // Define the line
 
-var yAxis = d3.svg.axis().scale(y)
-    .orient("left").ticks(5);
+            var valueline = d3.svg.line()
+                .x(function (d) { return x(d.x); })
+                .y(function (d) { return y(d.y); });
 
-// Define the line
+            // Define the div for the tooltip
+            var div = d3.select("body").append("div")
+                .attr("class", "tooltip")
+                .style("opacity", 0);
 
-var valueline = d3.svg.line()
-    .x(function(d) { return x(d.x); })
-    .y(function(d) { return y(d.y); });
-
-// Define the div for the tooltip
-var div = d3.select("body").append("div")	
-    .attr("class", "tooltip")				
-    .style("opacity", 0);
-
-// Adds the svg canvas
+            // Adds the svg canvas
 
 
-var svg = d3.select("body")
-    .append("svg")
-        .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top + margin.bottom)
-    .append("g")
-        .attr("transform", 
-              "translate(" + margin.left + "," + margin.top + ")");
+            var svg = d3.select("body")
+                .append("svg")
+                .attr("width", width + margin.left + margin.right)
+                .attr("height", height + margin.top + margin.bottom)
+                .append("g")
+                .attr("transform",
+                    "translate(" + margin.left + "," + margin.top + ")");
 
-// Get the data
-data = [];
-var data = aSunDataSR;
-aSunDataSR = [];
+            // Get the data
+            data = [];
+            var data = aSunDataSR;
+            aSunDataSR = [];
 
 
- data.forEach(function(d) {
-         d.x = d[0];
-         d.y = d[1];
-         d.sR = d[2];
-         d.date = d[3];
-     });
-data1 = [];
- var data1 = aSunDataSS;
- aSunDataSS = [];
+            data.forEach(function (d) {
+                d.x = d[0];
+                d.y = d[1];
+                d.sR = d[2];
+                d.date = d[3];
+            });
+            data1 = [];
+            var data1 = aSunDataSS;
+            aSunDataSS = [];
 
- data1.forEach(function(d) {
-         d.x = d[0];
-         d.y = d[1];
-         d.sS = d[2];
-         d.date = d[3];
-     });    
-    // Scale the range of the data
-    //x.domain(d3.extent(data1, function(d) { return d.x; }));
-    x.domain([0,1200])
-   // y.domain([0, d3.max(data1, function(d) { return d.y; })]);
-   y.domain([0, 24]);
+            data1.forEach(function (d) {
+                d.x = d[0];
+                d.y = d[1];
+                d.sS = d[2];
+                d.date = d[3];
+            });
+            // Scale the range of the data
+            //x.domain(d3.extent(data1, function(d) { return d.x; }));
+            x.domain([0, 1200])
+            // y.domain([0, d3.max(data1, function(d) { return d.y; })]);
+            y.domain([0, 24]);
 
-    // Add the valueline path.
-    svg.append("path")
-        .attr("class", "line")
-        .attr("d", valueline(data));
+            // Add the valueline path.
+            svg.append("path")
+                .attr("class", "line")
+                .attr("d", valueline(data));
 
-    // Add the scatterplot
-    svg.selectAll("dot")	
-        .data(data)			
-    .enter().append("circle")								
-        .attr("r", 4).attr("fill","blue")		
-        .attr("cx", function(d) { return x(d.x); })		 
-        .attr("cy", function(d) { return y(d.y); })		
-        .on("mouseover", function(d) {		
-            div.transition()		
-                .duration(200)		
-                .style("opacity", .9);		
-            div	.html(d.sR + "<br/>"  + d.date )	
-                .style("left", (d3.event.pageX) + "px")		
-                .style("top", (d3.event.pageY - 28) + "px");	
-            })					
-        .on("mouseout", function(d) {		
-            div.transition()		
-                .duration(500)		
-                .style("opacity", 0);	
-        });
+            // Add the scatterplot
+            svg.selectAll("dot")
+                .data(data)
+                .enter().append("circle")
+                .attr("r", 4).attr("fill", "blue")
+                .attr("cx", function (d) { return x(d.x); })
+                .attr("cy", function (d) { return y(d.y); })
+                .on("mouseover", function (d) {
+                    div.transition()
+                        .duration(200)
+                        .style("opacity", .9);
+                    div.html(d.sR + "<br/>" + d.date)
+                        .style("left", (d3.event.pageX) + "px")
+                        .style("top", (d3.event.pageY - 28) + "px");
+                })
+                .on("mouseout", function (d) {
+                    div.transition()
+                        .duration(500)
+                        .style("opacity", 0);
+                });
 
- // Add the scatterplot  - SS
+            // Add the scatterplot  - SS
 
- // Add the valueline path.
- svg.append("path")
-        .attr("class", "line")
-        .attr("d", valueline(data1));
+            // Add the valueline path.
+            svg.append("path")
+                .attr("class", "line")
+                .attr("d", valueline(data1));
 
-    svg.selectAll("dot")	
-        .data(data1)			
-    .enter().append("circle")								
-        .attr("r", 4).attr("fill","red")		
-        .attr("cx", function(d) { return x(d.x); })		 
-        .attr("cy", function(d) { return y(d.y); })		
-        .on("mouseover", function(d) {		
-            div.transition()		
-                .duration(200)		
-                .style("opacity", .9);		
-            div	.html(d.sS + "<br/>"  + d.date )	
-                .style("left", (d3.event.pageX) + "px")		
-                .style("top", (d3.event.pageY - 28) + "px");	
-            })					
-        .on("mouseout", function(d) {		
-            div.transition()		
-                .duration(500)		
-                .style("opacity", 0);	
-        });
-    // Add the X Axis
-    svg.append("g")
-        .attr("class", "x axis")
-        .attr("transform", "translate(0," + height + ")")
-        .call(xAxis);
+            svg.selectAll("dot")
+                .data(data1)
+                .enter().append("circle")
+                .attr("r", 4).attr("fill", "red")
+                .attr("cx", function (d) { return x(d.x); })
+                .attr("cy", function (d) { return y(d.y); })
+                .on("mouseover", function (d) {
+                    div.transition()
+                        .duration(200)
+                        .style("opacity", .9);
+                    div.html(d.sS + "<br/>" + d.date)
+                        .style("left", (d3.event.pageX) + "px")
+                        .style("top", (d3.event.pageY - 28) + "px");
+                })
+                .on("mouseout", function (d) {
+                    div.transition()
+                        .duration(500)
+                        .style("opacity", 0);
+                });
+            // Add the X Axis
+            svg.append("g")
+                .attr("class", "x axis")
+                .attr("transform", "translate(0," + height + ")")
+                .call(xAxis);
 
-    // Add the Y Axis
-    svg.append("g")
-        .attr("class", "y axis")
-        .call(yAxis);
-    };
-        </script>
+            // Add the Y Axis
+            svg.append("g")
+                .attr("class", "y axis")
+                .call(yAxis);
+        };
+    </script>
 
 </body>
 
