@@ -27,7 +27,7 @@ class Location {
         this.md_polar_day2;
         this.md_north_pole = 0;
         this.md_south_pole = 0;
-
+ 
         this.md_city = $ip_city;
         this.mdayLen = 0;
         this.mdayLenAsArray;
