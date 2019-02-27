@@ -52,9 +52,9 @@
 
     <select id="myselect">
         <option value="volvo">Volvo</option>
-        <input id="dSpan" type="number" value="200" text="Days span">
     </select>
-    <button onclick="myFunction(this)">OK</button>
+    <input id="dSpan" type="number" value="200" text="Days span" size=5>
+    <button onclick="getSunData(this)">OK</button>
     <p>Suntime</p>
 
     <p id="sunrise">Sunrise: </p>
@@ -87,7 +87,7 @@
         let PrefixSS = "Sunset:";
         let PrefixDD = "Day duration:";
 
-        function myFunction(context) {
+        function getSunData(context) {
 
 
             let oDate = new Date(document.getElementById("inputDate").value);
@@ -127,7 +127,7 @@
         };
 
         (function init() {
-            myFunction();
+            getSunData();
         })();
 
 
@@ -184,16 +184,13 @@
                 sunData.y = sunSetRaw;
                 sunData.sEvent = sunSet;
                 aSunDataSS.push([sunData.x, sunData.y, sunData.sEvent, sunData.date]);
-
             }
-
-
 
             // D3
             d3.select("svg").remove();
 
             var margin = { top: 30, right: 20, bottom: 30, left: 50 },
-                width = 1200 - margin.left - margin.right,
+                width = 1400 - margin.left - margin.right,
                 height = 470 - margin.top - margin.bottom;
 
             // Set the ranges
@@ -252,9 +249,10 @@
                 d.sS = d[2];
                 d.date = d[3];
             });
+            
             // Scale the range of the data
-            //x.domain(d3.extent(data1, function(d) { return d.x; }));
-            x.domain([0, 1200])
+            x.domain(d3.extent(data1, function(d) { return d.x; }));
+//            x.domain([0, 1200])
             // y.domain([0, d3.max(data1, function(d) { return d.y; })]);
             y.domain([0, 24]);
 
