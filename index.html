@@ -47,14 +47,15 @@
 <!-- V1.0 -->
     <p><b>Sunrise/set times</b></p>
 
-    <input id="inputDate" type="date" required>
-
+    <p><input id="inputDate" type="date" required>
 
     <select id="myselect">
         <option value="volvo">Volvo</option>
     </select>
-    <input id="dSpan" type="number" value="200" text="Days span" size=5>
-    <button onclick="getSunData(this)">OK</button>
+    <!-- <input id="dSpan" type="number" value="200" text="Days span" size=5> -->
+    <input id="dSpan" type="range" min="1" max="300" step="1" onchange="getSunData(this)">
+    Days ahead: <span id="sliderValue"></span>
+    <button onclick="getSunData(this)">OK</button> </p>
     <p>Suntime</p>
 
     <p id="sunrise">Sunrise: </p>
@@ -62,6 +63,14 @@
     <p id="dayLen">Day duration: </p>
 
     <script>
+
+var slider = document.getElementById("dSpan");
+var output = document.getElementById("sliderValue");
+output.innerHTML = slider.value;
+
+slider.oninput = function() {
+  output.innerHTML = this.value;
+}
         var aSunDataSR = [];
         var aSunDataSS = [];
 
