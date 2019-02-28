@@ -59,12 +59,14 @@
         <select id="myselect">
             <option value="volvo">Volvo</option>
         </select>
-        <!-- <input id="dSpan" type="number" value="200" text="Days span" size=5> -->
-        <span class="slider-wrapper">
-            <input id="dSpan" type="range" min="1" max="1370" step="1" onchange="getSunData(this)">
-        </span>
-        Days ahead: <span id="sliderValue"></span>
         <button onclick="getSunData(this)">OK</button> </p>
+        <!-- <input id="dSpan" type="number" value="200" text="Days span" size=5> -->
+        <span>Days ahead: </span><span id="sliderValue"></span>
+        <span class="slider-wrapper">
+            <input id="dSpan" type="range" min="1" max="1370" step="1" value=200 onchange="getSunData(this)">
+        </span>
+       
+      
     <p>Suntime</p>
     <span id="sunrise">Sunrise: </span>
     <span id="sunset"> Sunset: </span>
