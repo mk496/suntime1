@@ -97,7 +97,19 @@
                 mikMM = mikDate.getMonth() + 1;
             }
 
-            let formatted_date = mikDate.getFullYear() + "-" + mikMM + "-" + mikDate.getDate()
+            var mikDD = 0;
+
+           
+            if (
+                mikDate.getDate() < 10
+            ) {
+                
+                mikDD = "0" + mikDate.getDate();
+            } else {
+                mikDD = mikDate.getDate() + 1;
+            }
+
+            let formatted_date = mikDate.getFullYear() + "-" + mikMM + "-" + mikDD;
             document.getElementById('inputDate').value = formatted_date;
         };
         window.onload = setDateMIK();
