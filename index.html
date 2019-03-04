@@ -84,6 +84,11 @@
         var aSunDataSR = [];
         var aSunDataSS = [];
 
+        // define the x scale (horizontal)
+             let mindate = new Date(2019, 2, 4),
+                 maxdate = new Date(2019, 2, 30);
+
+
         function setDateMIK() {
             var mikDate = new Date();
 
@@ -118,15 +123,17 @@
         let PrefixSS = "Sunset:";
         let PrefixDD = "Day duration:";
 
+
         function getSunData(context) {
 
 
-            let oDate = new Date(document.getElementById("inputDate").value);
+            let oDate0 = new Date(document.getElementById("inputDate").value);
+            var mindate = new Date(document.getElementById("inputDate").value);
 
-            let oYear = oDate.getFullYear();
-            let oMonth = oDate.getMonth();
+            let oYear = oDate0.getFullYear();
+            let oMonth = oDate0.getMonth();
             oMonth = oMonth + 1;
-            let oDay = oDate.getDate();
+            let oDay = oDate0.getDate();
 
             this.locationsJSON = locations;
 
@@ -154,7 +161,11 @@
                 selectedOption = this.select.selectedIndex;
             }
 
-            getData(oDate, daysSpan, this, selectedOption);
+         
+            getDataSet(oDate0, daysSpan, this, selectedOption);
+
+          
+
         };
 
         (function init() {
@@ -174,7 +185,7 @@
             this.select.innerHTML += "<option value=\"" + opt + "\">" + opt + "</option>";
         };
 
-        function getData(oDate1, daysSpan, context, locationIndex) {
+        function getDataSet(oDate1, daysSpan, context, locationIndex) {
             var i;
             var sunData = { x: 0, y: 0, sEvent: 0, date: "" };
             let oYear = oDate1.getFullYear();
@@ -182,6 +193,9 @@
             oMonth = oMonth + 1;
             let oDay = oDate1.getDate();
             let oDate = oDate1;
+            
+           
+
             for (i = 0; i < daysSpan; i++) {
 
                 //oDate.addDays(i);
@@ -193,7 +207,7 @@
                 oMonth = oMonth + 1;
                 oDay = oDate.getDate();
 
-                // oLocation1 = new Location("Poznan", oYear, oMonth, oDay, 52.408333, 16.934167, 0, 0, 1, 0);
+                
                 oLocation1 = new Location(context.locationsJSON[locationIndex].city, oYear, oMonth, oDay, context.locationsJSON[locationIndex].latitude,
                     context.locationsJSON[locationIndex].longitude, 0, 0, context.locationsJSON[locationIndex].timeZone, 0);
                 oDay = oDay + 1;
@@ -213,7 +227,12 @@
                 sunData.y = sunSetRaw;
                 sunData.sEvent = sunSet;
                 aSunDataSS.push([sunData.x, sunData.y, sunData.sEvent, sunData.date]);
+
+// last
+                maxdate = oDate;
             }
+
+            
 
             // D3
             d3.select("svg").remove();
@@ -234,9 +253,9 @@
 
 
 
-            // define the x scale (horizontal)
-            var mindate = new Date(2019, 2, 4),
-                maxdate = new Date(2019, 2, 30);
+            // // define the x scale (horizontal)
+            // var mindate = new Date(2019, 2, 4),
+            //     maxdate = new Date(2019, 2, 30);
 
             var xScale = d3.time.scale()
                 .domain([mindate, maxdate])    // values between for month of january
