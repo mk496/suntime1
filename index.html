@@ -405,7 +405,7 @@
             svg.selectAll("dot")
                 .data(dataDL)
                 .enter().append("circle")
-                .attr("r", 4).attr("fill", "red")
+                .attr("r", 4).attr("fill", "yellow")
                 .attr("cx", function (d) { return x(d.x); })
                 .attr("cy", function (d) { return y(d.y); })
                 .on("mouseover", function (d) {
