@@ -83,6 +83,7 @@
         }
         var aSunDataSR = [];
         var aSunDataSS = [];
+        var aSunDataDL = [];  // DayLength
 
         // define the x scale (horizontal)
              let mindate = new Date(2019, 2, 4),
@@ -215,6 +216,7 @@
                 sunSetRaw = oLocation1.get_sunSet_raw();
                 sunRise = oLocation1.get_sunRise();
                 sunSet = oLocation1.get_sunSet();
+                dayLen = oLocation1.getDayLen();
 
 
                 sunData.x = i * 10;
@@ -227,6 +229,13 @@
                 sunData.y = sunSetRaw;
                 sunData.sEvent = sunSet;
                 aSunDataSS.push([sunData.x, sunData.y, sunData.sEvent, sunData.date]);
+
+                sunData.x = i * 10;
+                sunData.y = dayLen[0]+dayLen[1]/60;
+                sunData.sEvent = dayLen[0].toString() + ":" + dayLen[1].toString();
+                aSunDataDL.push([sunData.x, sunData.y, sunData.sEvent, sunData.date]);
+
+
 
 // last
                 maxdate = oDate;
@@ -316,7 +325,18 @@
                 d.date = d[3];
             });
 
-            // Scale the range of the data
+
+            dataDL = [];
+            var dataDL = aSunDataDL;
+            aSunDataDL = [];
+
+            dataDL.forEach(function (d) {
+                d.x = d[0];
+                d.y = d[1];
+                d.dL = d[2];
+                d.date = d[3];
+            });
+            // Scale the range of the data - SunSet
             x.domain(d3.extent(data1, function (d) { return d.x; }));
             //            x.domain([0, 1200])
             // y.domain([0, d3.max(data1, function(d) { return d.y; })]);
@@ -338,7 +358,7 @@
                     div.transition()
                         .duration(200)
                         .style("opacity", .9);
-                    div.html(d.sR + "<br/>" + d.date)
+                    div.html("Sun rise " + d.sR + "<br/>" + d.date)
                         .style("left", (d3.event.pageX) + "px")
                         .style("top", (d3.event.pageY - 28) + "px");
                 })
@@ -365,7 +385,7 @@
                     div.transition()
                         .duration(200)
                         .style("opacity", .9);
-                    div.html(d.sS + "<br/>" + d.date)
+                    div.html("Sun set " + d.sS + "<br/>" + d.date)
                         .style("left", (d3.event.pageX) + "px")
                         .style("top", (d3.event.pageY - 28) + "px");
                 })
@@ -374,6 +394,34 @@
                         .duration(500)
                         .style("opacity", 0);
                 });
+
+// Add the scatterplot  - DL
+
+            // Add the valueline path.
+            svg.append("path")
+                .attr("class", "line")
+                .attr("d", valueline(dataDL));
+
+            svg.selectAll("dot")
+                .data(dataDL)
+                .enter().append("circle")
+                .attr("r", 4).attr("fill", "red")
+                .attr("cx", function (d) { return x(d.x); })
+                .attr("cy", function (d) { return y(d.y); })
+                .on("mouseover", function (d) {
+                    div.transition()
+                        .duration(200)
+                        .style("opacity", .9);
+                    div.html("Day length " + d.dL + "<br/>" + d.date)
+                        .style("left", (d3.event.pageX) + "px")
+                        .style("top", (d3.event.pageY - 28) + "px");
+                })
+                .on("mouseout", function (d) {
+                    div.transition()
+                        .duration(500)
+                        .style("opacity", 0);
+                });
+
             // Add the X Axis
             svg.append("g")
                 .attr("class", "x axis")
