@@ -195,8 +195,7 @@
             let oDay = oDate1.getDate();
             let oDate = oDate1;
             
-           
-
+    
             for (i = 0; i < daysSpan; i++) {
 
                 //oDate.addDays(i);
@@ -211,7 +210,7 @@
                 
                 oLocation1 = new Location(context.locationsJSON[locationIndex].city, oYear, oMonth, oDay, context.locationsJSON[locationIndex].latitude,
                     context.locationsJSON[locationIndex].longitude, 0, 0, context.locationsJSON[locationIndex].timeZone, 0);
-                oDay = oDay + 1;
+            //    oDay = oDay + 1;
                 sunRiseRaw = oLocation1.get_sunRise_raw();
                 sunSetRaw = oLocation1.get_sunSet_raw();
                 sunRise = oLocation1.get_sunRise();
