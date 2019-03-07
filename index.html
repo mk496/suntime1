@@ -256,16 +256,7 @@
             // Set the ranges
             var x = d3.time.scale().range([0, width]);
             var y = d3.scale.linear().range([height, 0]);
-            //var y = d3.scaleLinear([0.24]).domain([0, 24]).range([height,0]);
-
-
-
-
-
-            // // define the x scale (horizontal)
-            // var mindate = new Date(2019, 2, 4),
-            //     maxdate = new Date(2019, 2, 30);
-
+          
             var xScale = d3.time.scale()
                 .domain([mindate, maxdate])    // values between for month of january
                 .range([padding, width - padding * 2]);   // map these the the chart width = total width minus padding at both sides
@@ -405,7 +396,16 @@
             svg.selectAll("dot")
                 .data(dataDL)
                 .enter().append("circle")
-                .attr("r", 4).attr("fill", "yellow")
+                .attr("r", 4).
+//                attr("fill", "yellow")
+                attr("fill", function(d) {
+    if (d.y > 11.98 && d.y < 12.05) {
+      return "red";
+    } else {
+      return "orange";
+    }
+    return "yellow";
+  })
                 .attr("cx", function (d) { return x(d.x); })
                 .attr("cy", function (d) { return y(d.y); })
                 .on("mouseover", function (d) {
