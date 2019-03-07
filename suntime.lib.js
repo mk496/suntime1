@@ -181,4 +181,396 @@ class Location {
         let minutes = Math.floor((ivValue - hour) * 60);
         return [hour, minutes];
     }
+
+// Polar zone ***************************************
+
+get_south_pole_sunrise_for_date($R, $M, $D, $lat, $tz, $dst) {
+
+    if ($lat > -89.41) {
+        return -9;
+    };
+
+    this.$dat = $M . $D;
+
+    [this.$ss, this.$sr, this.$day_ss, this.$day_sr] = this.get_sunrise_sunset_for_poles_new2($R, 'S', $tz, $dst);
+
+    if (this.$dat == this.$day_sr) {
+        this.$polar_day = 0;  // Sunrisa/ss day
+    } else if (this.$dat > this.$day_sr && this.$dat < '1231') {
+        this.$polar_day = 1; // POLAR DAY
+        this.$sr = 0;
+    } else if (this.$dat < this.$day_ss && this.$dat > '101') {
+        this.$polar_day = 1; // POLAR DAY
+        this.$sr = 0;
+    } else {
+        this.$polar_day = -1; // POLAR NIGHT
+        this.$sr = 0;
+    };
+
+    return [this.$sr, this.$polar_day]; // 1 - day, -1 - night
+}
+
+get_south_pole_sunset_for_date($R, $M, $D, $lat, $tz, $dst) {
+
+    if (this.$lat > -89.41) {
+        return -9;
+    };
+
+    this.$dat = $M . $D;
+
+    [this.$ss, this.$sr, this.$day_ss, this.$day_sr] = this.get_sunrise_sunset_for_poles_new2($R, 'S', $tz, $dst);
+
+
+    if (this.$dat == this.$day_ss) {
+        this.$polar_day = 0;  // Sunrisa/ss day
+    } else if (this.$dat > this.$day_sr && this.$dat < '1231') {
+        this.$polar_day = 1; // POLAR DAY
+        this.$ss = 0;
+    } else if (this.$dat < this.$day_ss && $dat > '101') {
+        this.$polar_day = 1; // POLAR DAY
+        this.$ss = 0;
+    } else {
+        this.$polar_day = -1; // POLAR NIGHT
+        this.$ss = 0;
+    };
+
+
+    return [$ss, $polar_day]; // 1 - day, -1 - night
+}
+
+get_north_pole_sunset_for_date($R, $M, $D, $lat, $tz, $dst) {
+
+    if ($lat < 89.41) {
+        return -9;
+    };
+
+    this.$dat = $M . $D;
+
+    [ this.$sr, this.$ss, this.$day_sr, this.$day_ss ] = this.get_sunrise_sunset_for_poles_new2($R, 'N', $tz, $dst);
+
+    if (this.$dat == this.$day_ss) {
+        this.$polar_day = 0;  // Sunrisa/ss day
+    } else if (this.$dat > this.$day_ss || this.$dat < this.$day_sr) {
+        this.$polar_day = -1; // POLAR Night
+        this.$ss = 0;
+    } else {
+        this.$polar_day = 1; // POLAR day
+        this.$ss = 0;
+    };
+
+    return [$ss, $polar_day]; // 1 - day, -1 - night
+}
+
+get_north_pole_sunrise_for_date($R, $M, $D, $lat, $tz, $dst) {
+
+    if (this.$lat < 89.41) {
+        return -9;
+    };
+
+    this.$dat = $M . $D;
+
+    [ $sr, $ss, $day_sr, $day_ss ] = this.get_sunrise_sunset_for_poles_new2($R, 'N', $tz, $dst);
+
+    if (this.$dat == this.$day_sr) {
+        this.$polar_day = 0;  // Sunrisa/ss day    
+    } else if (this.$dat > this.$day_ss || this.$dat < this.$day_sr) {
+        this.$polar_day = -1; // POLAR Night  
+        this.$sr = 0;
+    } else {
+        this.$polar_day = 1; // POLAR DAY  
+        this.$sr = 0;
+    };
+
+    return [$sr, $polar_day]; // 1 - day, -1 - night
+}
+
+get_sunrise_sunset_for_poles_new2($R, $H, $TZ, $dst) {
+
+    this.$lc_sunrise_day_1_march_n = '317';
+    this.$lc_sunrise_day_2_march_n = '318';
+    this.$lc_sunrise_day_3_march_n = '319';
+
+    this.$lc_sunrise_day_1_sept_n = '923';
+    this.$lc_sunrise_day_2_sept_n = '924';
+    this.$lc_sunrise_day_3_sept_n = '925';
+    this.$lc_sunrise_day_4_sept_n = '926';
+
+    this.$lc_sunrise_day_1_march_s = '321';
+    this.$lc_sunrise_day_2_march_s = '322';
+    this.$lc_sunrise_day_3_march_s = '323';
+
+    this.$lc_sunrise_day_1_sept_s = '919';
+    this.$lc_sunrise_day_2_sept_s = '920';
+    this.$lc_sunrise_day_3_sept_s = '921';
+
+    this.$diff = $R - 2000;
+    this.$b0 = 0.24237404;
+    this.$b1 = 0.00000010338 * this.$diff;
+    this.$tropic_year_diff_ve = ( this.$b0 + this.$b1 ) * 24;  //vernal equinox
+
+    this.$a0 = 0.24201767;
+    this.$a1 = 0.0000002315 * this.$diff;
+    this.$tropic_year_diff_ae = ( this.$a0 - this.$a1 ) * 24; // autumnal equinox
+
+    switch ($H) {
+        case 'S' :  // South pole
+        this.$sunrise_pole_2000 = 10.116667; //"10:10";  
+        this.$sunset_pole_2000 = 14.02; //"14:16";            
+
+        this.$sunrise_pole_curr = this.$sunrise_pole_2000 + this.$tropic_year_diff_ve * this.$diff + $TZ + $dst; //"22:07";
+        this.$sunset_pole_curr = this.$sunset_pole_2000 + this.$tropic_year_diff_ae * this.$diff + $TZ + $dst; //"2:12";
+
+            this.$df2000 = this.get_24h_number_from_2000(this.$sunrise_pole_curr);
+            this.$df2000_ss = this.get_24h_number_from_2000(this.$sunset_pole_curr);
+            this.$lf2000 = this.get_leap_year_number_from_2000($R);
+            //$mod_y = $R % 4;
+            this.$mod_y = this.is_leap_y($R);
+
+
+            this.$diff_d = this.$lf2000 - this.$df2000;
+            this.$diff_d_ss = this.$lf2000 - this.$df2000_ss;
+
+            //echo ' $df2000_ss: ' . $df2000_ss . ' $lf2000: ' . $lf2000 . ' ';
+
+            if (this.$diff_d == 1 && this.$mod_y == 0) {
+                this.$ep_day_sr = this.$lc_sunrise_day_1_march_s;
+            };
+
+            if (this.$diff_d == 1 && this.$mod_y > 0) {
+                this.$ep_day_sr = this.$lc_sunrise_day_2_march_s;
+            };
+
+            if (this.$diff_d == 0 && this.$mod_y > 0) {
+                this.$ep_day_sr = this.$lc_sunrise_day_2_march_s;
+            };
+
+            if (this.$diff_d == 0 && this.$mod_y == 0) {
+                this.$ep_day_sr = this.$lc_sunrise_day_2_march_s;
+            };
+
+            if (this.$diff_d == -1 && this.$mod_y > 0) {
+                this.$ep_day_sr = this.$lc_sunrise_day_3_march_s;
+            };
+
+            if (this.$diff_d == -1 && this.$mod_y == 0) {
+                this.$ep_day_sr = this.$lc_sunrise_day_3_march_s;
+            };
+// ******************************************************************
+
+            if (this.$diff_d_ss == 1 && this.$mod_y == 0) {
+                this.$ep_day_ss = this.$lc_sunrise_day_1_sept_s;
+            };
+
+            if (this.$diff_d_ss == 1 && this.$mod_y > 0) {
+                this.$ep_day_ss = this.$lc_sunrise_day_2_sept_s;
+            };
+
+            if (this.$diff_d_ss == 0 && this.$mod_y > 0) {
+                this.$ep_day_ss = this.$lc_sunrise_day_2_sept_s;
+            };
+
+            if (this.$diff_d_ss == 0 && this.$mod_y == 0) {
+                this.$ep_day_ss = this.$lc_sunrise_day_2_sept_s;
+            };
+
+            if (this.$diff_d_ss == -1 && this.$mod_y > 0) {
+                this.$ep_day_ss = this.$lc_sunrise_day_3_sept_s;
+            };
+
+            if (this.$diff_d_ss == -1 && this.$mod_y == 0) {
+                this.$ep_day_ss = this.$lc_sunrise_day_3_sept_s;
+            };
+            break;
+
+        case 'N' :  // North pole
+            this.$sunrise_pole_2000 = 5.05; //"18:34";
+            this.$sunset_pole_2000 = 20.60; //"5:03";   
+
+            this.$sunrise_pole_curr = this.$sunrise_pole_2000 + this.$tropic_year_diff_ve * this.$diff + $TZ + $dst; //"22:07";
+            this.$sunset_pole_curr = this.$sunset_pole_2000 + this.$tropic_year_diff_ae * this.$diff + $TZ + $dst; //"2:12";
+
+            this.$df2000 = this.get_24h_number_from_2000(this.$sunrise_pole_curr);
+            this.$df2000_ss = this.get_24h_number_from_2000(this.$sunset_pole_curr);
+            this.$lf2000 = this.get_leap_year_number_from_2000($R);
+            //$mod_y = $R % 4;
+            this.$mod_y = this.is_leap_y($R);
+            //echo ' mod_y: '.$mod_y;
+            //echo ' $df2000: ' . $df2000 . ' $lf2000: ' . $lf2000 . ' ';
+            this.$diff_d = this.$lf2000 - this.$df2000;
+            this.$diff_d_ss = this.$lf2000 - this.$df2000_ss;
+
+            if (this.$diff_d == 1 && this.$mod_y == 0) {
+                this.$ep_day_sr = this.$lc_sunrise_day_1_march_n;
+            };
+
+            if (this.$diff_d == 1 && this.$mod_y > 0) {
+                this.$ep_day_sr = this.$lc_sunrise_day_2_march_n;
+            };
+
+            if (this.$diff_d == 0 && this.$mod_y > 0) {
+                this.$ep_day_sr = this.$lc_sunrise_day_2_march_n;
+            };
+
+            if (this.$diff_d == 0 && this.$mod_y == 0) {
+                this.$ep_day_sr = this.$lc_sunrise_day_2_march_n;
+            };
+
+            if (this.$diff_d == -1 && this.$mod_y > 0) {
+                this.$ep_day_sr = this.$lc_sunrise_day_3_march_n;
+            };
+            if (this.$diff_d == -1 && this.$mod_y == 0) {
+                this.$ep_day_sr = this.$lc_sunrise_day_3_march_n;
+            };
+
+// ******************************************************************
+
+            if (this.$diff_d_ss == 1 && this.$mod_y == 0) {
+                this.$ep_day_ss = this.$lc_sunrise_day_1_sept_n;
+            };
+
+            if (this.$diff_d_ss == 1 && this.$mod_y > 0) {
+                this.$ep_day_ss = this.$lc_sunrise_day_2_sept_n;
+            };
+
+            if (this.$diff_d_ss == 0 && this.$mod_y > 0) {
+                this.$ep_day_ss = this.$lc_sunrise_day_2_sept_n;
+            };
+
+            if (this.$diff_d_ss == 0 && this.$mod_y == 0) {
+                this.$ep_day_ss = this.$lc_sunrise_day_2_sept_n;
+            };
+
+            if (this.$diff_d_ss == -1 && this.$mod_y > 0) {
+                this.$ep_day_ss = this.$lc_sunrise_day_3_sept_n;
+            };
+            if (this.$diff_d_ss == -1 && this.$mod_y == 0) {
+                this.$ep_day_ss = this.$lc_sunrise_day_3_sept_n;
+            };
+            if (this.$diff_d_ss == -2 && this.$mod_y > 0) {
+                this.$ep_day_ss = this.$lc_sunrise_day_4_sept_n;
+            };
+            if (this.$diff_d_ss == -2 && this.$mod_y == 0) {
+                this.$ep_day_ss = this.$lc_sunrise_day_4_sept_n;
+            };
+            break;
+    }
+
+    if (this.$sunrise_pole_curr > 24) {
+        this.$sunrise_pole_curr = this.get_hour(this.$sunrise_pole_curr);
+    }
+
+    if (this.$sunset_pole_curr > 24) {
+        this.$sunset_pole_curr = this.get_hour(this.$sunset_pole_curr);
+    }
+
+    return [this.$sunrise_pole_curr, this.$sunset_pole_curr, this.$ep_day_sr, this.$ep_day_ss];
+}
+
+set_shift_for_date($iv_R, $iv_M, $iv_D, $iv_shift) {
+
+ this.$lv_date = mktime(0, 0, 0, $iv_M, $iv_D + $iv_shift, $iv_R);
+    this.md_u_date = $lv_date;
+   this.$arr_date = getdate($lv_date);
+
+    this.md_year = this.$arr_date[year];
+    this.md_month = this.$arr_date[mon];
+    this.md_day = this.$arr_date[mday];        
+}
+
+//////  ******* HELP FUNCTION **************
+
+
+get_hour($val) {
+    this.$mod1 = $val % 24;
+    this.$floor1 = floor($val);
+    this.$minsek = $val - this.$floor1;
+    //$ho = intval($mod1);
+    //$min = $val - $ho;   
+    this.$ret_val = this.$mod1 + this.$minsek;
+    return this.$ret_val;
+}
+
+get_24h_number_from_2000($ip_val) {
+    this.$ep_ret = intval($ip_val / 24);
+    return this.$ep_ret;
+}
+
+get_leap_year_number_from_2000($ip_val) {
+    this.$ep_ret = 0;
+    for (this.$i = 2001; this.$i <= $ip_val; this.$i++) {
+        //this.$lv_mod = $i % 4;
+        this.$lv_mod = this.is_leap_y(this.$i);
+        if (this.$lv_mod == 0) {
+            this.$ep_ret = this.$ep_ret + 1;
+        }
+    }
+    return this.$ep_ret;
+}
+
+is_leap_y($R) {
+    if ($R % 4 == 0) {
+        if ($R % 100 == 0) {
+            if ($R % 400 == 0) {
+                return 0;  // is leap
+            } else {
+                return 1;
+            }
+        } else {
+            return 0;  // is leap
+        }
+    } else {
+        return 1;
+    }
+}
+
+get_polar_night_day($month, $sr, $ss, $lat) {
+
+
+// NORTH POLE
+    if ($lat > 66 && $sr == $ss && $month > 8) {
+        return -1;  // polar night    
+    };
+
+    if ($lat > 66 && $sr == $ss && $month < 4) {
+        return -1;  // polar night    
+    };
+
+// SOUTH POLE
+    if ($lat < -66 && $sr == $ss && $month > 2 && $month < 10) {
+        return -1;  // polar night    
+    };
+
+// ************** Polar day ****************
+// NORTH POLE
+    if ($lat > 66 && $sr == $ss && $month > 2 && $month < 10) {
+        return 1;  // polar day    
+    };
+
+// SOUTH POLE
+    if ($lat < -66 && $sr == $ss && $month < 4) {
+        return 1;  // polar night    
+    };
+
+    if ($lat < -66 && $sr == $ss && $month > 8) {
+        return 1;  // polar night    
+    };
+
+// otherwise         
+    return 0;
+}
+
+// ********************** HELP FUNCTIONS END ******************    
+// ********************** HELP FUNCTIONS END ******************    
+// ********************** HELP FUNCTIONS END ******************    
+
+get_time_over_24h($ip_time) {
+    if ($ip_time > 24.00) {
+        this.$ret_val = $ip_time - 24.00;
+        return this.$ret_val;
+    }
+    return $ip_time;
+}
+
+
+
 };
