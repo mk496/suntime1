@@ -50,11 +50,17 @@ class Location {
             [this.md_sunset3, this.md_cent3] = this.calculate_Etime(this.md_year, this.md_month, this.md_day, $IVLAT, $IVLONG, this.md_cent2, -1, $IVDST, $IVTZ);
             [this.md_sunset4, this.md_cent4] = this.calculate_Etime(this.md_year, this.md_month, this.md_day, $IVLAT, $IVLONG, this.md_cent3, -1, $IVDST, $IVTZ);
 
+            this.md_polar_day = this.get_polar_night_day($IVM, this.md_sunrise4, this.md_sunset4, $IVLAT);
+        } else if ($IVLAT == 90) {  // north pole
+            this.md_north_pole = 1;
+            this.get_north_pole_data(this.md_year, this.md_month, this.md_day, $IVLAT, $IVTZ, $IVDST);
+        } else if ($IVLAT == -90) { // south pole
+            this.md_south_pole = 1;
+            this.get_south_pole_data(this.md_year, this.md_month, this.md_day, $IVLAT, $IVTZ, $IVDST);
+        
+
         }
     };
-
-
-
 
     calculate_Etime($IVY, $IVM, $IVD, $IVLAT, $IVLONG, $IVCENT, $IVRISE, $IVDST, $IVTZ) {
         let $C1 = 0.017453293;
