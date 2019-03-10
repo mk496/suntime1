@@ -62,6 +62,56 @@ class Location {
         }
     };
 
+     get_south_pole_data($IVY, $IVM, $IVD, $IVLAT, $IVTZ, $IVDST) {
+        [this.md_sunrise4, this.md_polar_day1] = this.get_south_pole_sunrise_for_date($IVY, $IVM, $IVD, $IVLAT, $IVTZ, $IVDST);
+        [this.md_sunset4, this.md_polar_day2] = this.get_south_pole_sunset_for_date($IVY, $IVM, $IVD, $IVLAT, $IVTZ, $IVDST);
+
+        if (this.md_polar_day1 == -9 || this.md_polar_day1 == 0) {
+            this.md_polar_day = 0;
+            return;
+        };
+
+        if (this.md_polar_day2 == -9 || this.md_polar_day2 == 0) {
+            this.md_polar_day = 0;
+            return;
+        };
+
+        if (this.md_polar_day1 == -1 || this.md_polar_day2 == -1) {
+            this.md_polar_day = -1;
+            return;
+        };
+
+        if (this.md_polar_day2 == 1 || this.md_polar_day2 == 1) {
+            this.md_polar_day = 1;
+            return;
+        };
+    }
+
+     get_north_pole_data($IVY, $IVM, $IVD, $IVLAT, $IVTZ, $IVDST) {
+        [this.md_sunrise4, this.md_polar_day1] = this.get_north_pole_sunrise_for_date($IVY, $IVM, $IVD, $IVLAT, $IVTZ, $IVDST);
+        [this.md_sunset4, this.md_polar_day2] = this.get_north_pole_sunset_for_date($IVY, $IVM, $IVD, $IVLAT, $IVTZ, $IVDST);
+
+        if (this.md_polar_day1 == -9 || this.md_polar_day1 == 0) {
+            this.md_polar_day = 0;
+            return;
+        };
+
+        if (this.md_polar_day2 == -9 || this.md_polar_day2 == 0) {
+            this.md_polar_day = 0;
+            return;
+        };
+
+        if (this.md_polar_day1 == -1 || this.md_polar_day2 == -1) {
+            this.md_polar_day = -1;
+            return;
+        };
+
+        if (this.md_polar_day2 == 1 || this.md_polar_day2 == 1) {
+            this.md_polar_day = 1;
+            return;
+        }
+    }
+
     calculate_Etime($IVY, $IVM, $IVD, $IVLAT, $IVLONG, $IVCENT, $IVRISE, $IVDST, $IVTZ) {
         let $C1 = 0.017453293;
         let $TZ = $IVTZ; // Strefa czasowa
@@ -241,7 +291,7 @@ get_south_pole_sunset_for_date($R, $M, $D, $lat, $tz, $dst) {
     };
 
 
-    return [$ss, $polar_day]; // 1 - day, -1 - night
+    return [this.$ss, this.$polar_day]; // 1 - day, -1 - night
 }
 
 get_north_pole_sunset_for_date($R, $M, $D, $lat, $tz, $dst) {
@@ -264,7 +314,7 @@ get_north_pole_sunset_for_date($R, $M, $D, $lat, $tz, $dst) {
         this.$ss = 0;
     };
 
-    return [$ss, $polar_day]; // 1 - day, -1 - night
+    return [this.$ss, this.$polar_day]; // 1 - day, -1 - night
 }
 
 get_north_pole_sunrise_for_date($R, $M, $D, $lat, $tz, $dst) {
@@ -275,7 +325,7 @@ get_north_pole_sunrise_for_date($R, $M, $D, $lat, $tz, $dst) {
 
     this.$dat = $M . $D;
 
-    [ $sr, $ss, $day_sr, $day_ss ] = this.get_sunrise_sunset_for_poles_new2($R, 'N', $tz, $dst);
+    [ this.$sr, this.$ss, this.$day_sr, this.$day_ss ] = this.get_sunrise_sunset_for_poles_new2($R, 'N', $tz, $dst);
 
     if (this.$dat == this.$day_sr) {
         this.$polar_day = 0;  // Sunrisa/ss day    
@@ -287,7 +337,7 @@ get_north_pole_sunrise_for_date($R, $M, $D, $lat, $tz, $dst) {
         this.$sr = 0;
     };
 
-    return [$sr, $polar_day]; // 1 - day, -1 - night
+    return [this.$sr, this.$polar_day]; // 1 - day, -1 - night
 }
 
 get_sunrise_sunset_for_poles_new2($R, $H, $TZ, $dst) {
@@ -488,7 +538,7 @@ set_shift_for_date($iv_R, $iv_M, $iv_D, $iv_shift) {
 
 get_hour($val) {
     this.$mod1 = $val % 24;
-    this.$floor1 = floor($val);
+    this.$floor1 = Math.floor($val);
     this.$minsek = $val - this.$floor1;
     //$ho = intval($mod1);
     //$min = $val - $ho;   
@@ -497,7 +547,7 @@ get_hour($val) {
 }
 
 get_24h_number_from_2000($ip_val) {
-    this.$ep_ret = intval($ip_val / 24);
+    this.$ep_ret = Math.round( $ip_val / 24);
     return this.$ep_ret;
 }
 

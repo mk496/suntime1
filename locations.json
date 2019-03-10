@@ -3,7 +3,9 @@ locations = [{"city":"Poznan", "latitude":52.408333, "longitude":16.934167, "tim
 {"city":"Moskwa", "latitude":55.75, "longitude":37.616667,"timeZone": 3},
 {"city":"Anchorage", "latitude":61.21, "longitude":-149.88,"timeZone": -9},
 {"city":"Spotzbergen", "latitude":78.9, "longitude":18.01,"timeZone": 1},
-{"city":"McMurdo", "latitude":-77.84, "longitude":166.66,"timeZone": 12}]
+{"city":"McMurdo", "latitude":-77.84, "longitude":166.66,"timeZone": 12},
+{"city":"NP", "latitude":90, "longitude":166.66,"timeZone": 12},
+{"city":"SP", "latitude":-90, "longitude":166.66,"timeZone": 12}]
 
 
     
