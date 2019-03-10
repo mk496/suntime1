@@ -166,10 +166,6 @@
             else if (polarDay == -1) { document.getElementById("polarDay").innerHTML = "Polar Night" }
             else { document.getElementById("polarDay").innerHTML = " " };
 
-
-
-
-
             let daysSpan = document.getElementById("dSpan").value;
 
             var selectedOption = 0;
@@ -177,10 +173,7 @@
                 selectedOption = this.select.selectedIndex;
             }
 
-
             getDataSet(oDate0, daysSpan, this, selectedOption);
-
-
 
         };
 
@@ -251,13 +244,9 @@
                 sunData.polarDay = polarDay;
                 aSunDataDL.push([sunData.x, sunData.y, sunData.sEvent, sunData.date, sunData.polarDay]);
 
-
-
                 // last
                 maxdate = oDate;
             }
-
-
 
             // D3
             d3.select("svg").remove();
@@ -276,8 +265,6 @@
             var xScale = d3.time.scale()
                 .domain([mindate, maxdate])    // values between for month of january
                 .range([padding, width - padding * 2]);   // map these the the chart width = total width minus padding at both sides
-
-
 
             //  Define the axes
             var xAxis = d3.svg.axis().scale(xScale)
@@ -424,7 +411,15 @@
                     return "yellow";
                 })
                 .attr("cx", function (d) { return x(d.x); })
-                .attr("cy", function (d) { return y(d.y); })
+                .attr("cy", function (d) { 
+                    if ( d.polarDay == 0 )
+                     { return y(d.y); }
+                    else if (d.polarDay == 1) 
+                    { return y(24); }
+                    else if (d.polarDay == -1) 
+                    {  return y(0); }
+                     }
+                     )
                 .on("mouseover", function (d) {
 
                     if ( d.polarDay == 0 ) {
