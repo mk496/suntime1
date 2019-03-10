@@ -547,7 +547,7 @@ get_hour($val) {
 }
 
 get_24h_number_from_2000($ip_val) {
-    this.$ep_ret = Math.round( $ip_val / 24);
+    this.$ep_ret = Math.floor( $ip_val / 24);
     return this.$ep_ret;
 }
 
