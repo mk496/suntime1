@@ -531,7 +531,12 @@ is_leap_y($R) {
 
 get_polar_night_day($month, $sr, $ss, $lat) {
 
-
+if ( isNaN($sr)  ) {
+    $sr = 0;
+};
+if ( isNaN($ss)  ) {
+    $ss = 0;
+}
 // NORTH POLE
     if ($lat > 66 && $sr == $ss && $month > 8) {
         return -1;  // polar night    
@@ -554,7 +559,7 @@ get_polar_night_day($month, $sr, $ss, $lat) {
 
 // SOUTH POLE
     if ($lat < -66 && $sr == $ss && $month < 4) {
-        return 1;  // polar night    
+        return 1;  // polar day    
     };
 
     if ($lat < -66 && $sr == $ss && $month > 8) {
@@ -565,6 +570,9 @@ get_polar_night_day($month, $sr, $ss, $lat) {
     return 0;
 }
 
+getPolarDay() {
+return this.md_polar_day
+}
 // ********************** HELP FUNCTIONS END ******************    
 // ********************** HELP FUNCTIONS END ******************    
 // ********************** HELP FUNCTIONS END ******************    

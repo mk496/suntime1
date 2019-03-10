@@ -68,9 +68,14 @@
 
 
     <p style="font-size: 12pt">Suntime</p>
-    <span style="font-size: 12pt">Sunrise: </span><span id="sunrise" style="color:blue;font-weight:bold; font-size: 12pt"> </span>
-    <span style="font-size: 12pt">Sunset: </span><span id="sunset" style="color:red;font-weight:bold; font-size: 12pt"> Sunset: </span>
-    <span style="font-size: 12pt">Day length: </span><span id="dayLen" style="color:green;font-weight:bold; font-size: 12pt" > Day duration: </span>
+    <span style="font-size: 12pt">Sunrise: </span><span id="sunrise"
+        style="color:blue;font-weight:bold; font-size: 12pt"> </span>
+    <span style="font-size: 12pt">Sunset: </span><span id="sunset" style="color:red;font-weight:bold; font-size: 12pt">
+    </span>
+    <span style="font-size: 12pt">Day length: </span><span id="dayLen"
+        style="color:green;font-weight:bold; font-size: 12pt"> </span>
+    <span id="polarDay" style="color:green;font-weight:bold; font-size: 12pt"> </span>
+
 
     <script>
 
@@ -86,8 +91,8 @@
         var aSunDataDL = [];  // DayLength
 
         // define the x scale (horizontal)
-             let mindate = new Date(2019, 2, 4),
-                 maxdate = new Date(2019, 2, 30);
+        let mindate = new Date(2019, 2, 4),
+            maxdate = new Date(2019, 2, 30);
 
 
         function setDateMIK() {
@@ -149,11 +154,21 @@
             let sunRise = oLocation1.get_sunRise();
             let sunSet = oLocation1.get_sunSet();
             let dayLen = oLocation1.getDayLen();
+            let polarDay = oLocation1.getPolarDay();
 
             document.getElementById("sunrise").innerHTML = PrefixSR + sunRise[0] + ":" + sunRise[1];
             document.getElementById("sunset").innerHTML = PrefixSS + sunSet[0] + ":" + sunSet[1];
             document.getElementById("dayLen").innerHTML = PrefixDD + dayLen[0] + ":" + dayLen[1];
-            console.log(sunRise);
+
+            if (polarDay == 1) {
+                document.getElementById("polarDay").innerHTML = "Polar Day";
+            }
+            else if (polarDay == -1) { document.getElementById("polarDay").innerHTML = "Polar Night" }
+            else { document.getElementById("polarDay").innerHTML = " " };
+
+
+
+
 
             let daysSpan = document.getElementById("dSpan").value;
 
@@ -162,10 +177,10 @@
                 selectedOption = this.select.selectedIndex;
             }
 
-         
+
             getDataSet(oDate0, daysSpan, this, selectedOption);
 
-          
+
 
         };
 
@@ -194,8 +209,8 @@
             oMonth = oMonth + 1;
             let oDay = oDate1.getDate();
             let oDate = oDate1;
-            
-    
+
+
             for (i = 0; i < daysSpan; i++) {
 
                 //oDate.addDays(i);
@@ -207,10 +222,10 @@
                 oMonth = oMonth + 1;
                 oDay = oDate.getDate();
 
-                
+
                 oLocation1 = new Location(context.locationsJSON[locationIndex].city, oYear, oMonth, oDay, context.locationsJSON[locationIndex].latitude,
                     context.locationsJSON[locationIndex].longitude, 0, 0, context.locationsJSON[locationIndex].timeZone, 0);
-            //    oDay = oDay + 1;
+                //    oDay = oDay + 1;
                 sunRiseRaw = oLocation1.get_sunRise_raw();
                 sunSetRaw = oLocation1.get_sunSet_raw();
                 sunRise = oLocation1.get_sunRise();
@@ -230,17 +245,17 @@
                 aSunDataSS.push([sunData.x, sunData.y, sunData.sEvent, sunData.date]);
 
                 sunData.x = i * 10;
-                sunData.y = dayLen[0]+dayLen[1]/60;
+                sunData.y = dayLen[0] + dayLen[1] / 60;
                 sunData.sEvent = dayLen[0].toString() + ":" + dayLen[1].toString();
                 aSunDataDL.push([sunData.x, sunData.y, sunData.sEvent, sunData.date]);
 
 
 
-// last
+                // last
                 maxdate = oDate;
             }
 
-            
+
 
             // D3
             d3.select("svg").remove();
@@ -255,7 +270,7 @@
             // Set the ranges
             var x = d3.time.scale().range([0, width]);
             var y = d3.scale.linear().range([height, 0]);
-          
+
             var xScale = d3.time.scale()
                 .domain([mindate, maxdate])    // values between for month of january
                 .range([padding, width - padding * 2]);   // map these the the chart width = total width minus padding at both sides
@@ -385,7 +400,7 @@
                         .style("opacity", 0);
                 });
 
-// Add the scatterplot  - DL
+            // Add the scatterplot  - DL
 
             // Add the valueline path.
             svg.append("path")
@@ -396,15 +411,15 @@
                 .data(dataDL)
                 .enter().append("circle")
                 .attr("r", 4).
-//                attr("fill", "yellow")
-                attr("fill", function(d) {
-    if (d.y > 11.98 && d.y < 12.05) {
-      return "red";
-    } else {
-      return "orange";
-    }
-    return "yellow";
-  })
+                //                attr("fill", "yellow")
+                attr("fill", function (d) {
+                    if (d.y > 11.98 && d.y < 12.05) {
+                        return "red";
+                    } else {
+                        return "orange";
+                    }
+                    return "yellow";
+                })
                 .attr("cx", function (d) { return x(d.x); })
                 .attr("cy", function (d) { return y(d.y); })
                 .on("mouseover", function (d) {
