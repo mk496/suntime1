@@ -1,3 +1,4 @@
+// Library suntime location V1.0 copyright GNU licence by M.Karaskiewicz 2019
 class Location {
     constructor($ip_city, $IVY, $IVM, $IVD, $IVLAT, $IVLONG, $IVCENT, $IVDST, $IVTZ, $iv_shift) {
         this.md_city;
@@ -534,7 +535,6 @@ set_shift_for_date($iv_R, $iv_M, $iv_D, $iv_shift) {
 }
 
 //////  ******* HELP FUNCTION **************
-
 
 get_hour($val) {
     this.$mod1 = $val % 24;
