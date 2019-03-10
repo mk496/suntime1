@@ -67,10 +67,10 @@
     </span>
 
 
-    <p>Suntime</p>
-    <span id="sunrise">Sunrise: </span>
-    <span id="sunset"> Sunset: </span>
-    <span id="dayLen"> Day duration: </span>
+    <p style="font-size: 12pt">Suntime</p>
+    <span style="font-size: 12pt">Sunrise: </span><span id="sunrise" style="color:blue;font-weight:bold; font-size: 12pt"> </span>
+    <span style="font-size: 12pt">Sunset: </span><span id="sunset" style="color:red;font-weight:bold; font-size: 12pt"> Sunset: </span>
+    <span style="font-size: 12pt">Day length: </span><span id="dayLen" style="color:green;font-weight:bold; font-size: 12pt" > Day duration: </span>
 
     <script>
 
@@ -120,9 +120,9 @@
         };
         window.onload = setDateMIK();
 
-        let PrefixSR = "Sunrise:";
-        let PrefixSS = "Sunset:";
-        let PrefixDD = "Day duration:";
+        let PrefixSR = " ";
+        let PrefixSS = " ";
+        let PrefixDD = " ";
 
 
         function getSunData(context) {

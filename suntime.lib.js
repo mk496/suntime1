@@ -558,7 +558,7 @@ get_polar_night_day($month, $sr, $ss, $lat) {
     };
 
     if ($lat < -66 && $sr == $ss && $month > 8) {
-        return 1;  // polar night    
+        return 1;  // polar day    
     };
 
 // otherwise         
