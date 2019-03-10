@@ -247,7 +247,7 @@ get_south_pole_sunrise_for_date($R, $M, $D, $lat, $tz, $dst) {
         return -9;
     };
 
-    this.$dat = $M . $D;
+    this.$dat = $M.toString() + $D.toString();
 
     [this.$ss, this.$sr, this.$day_ss, this.$day_sr] = this.get_sunrise_sunset_for_poles_new2($R, 'S', $tz, $dst);
 
@@ -273,7 +273,7 @@ get_south_pole_sunset_for_date($R, $M, $D, $lat, $tz, $dst) {
         return -9;
     };
 
-    this.$dat = $M . $D;
+    this.$dat = $M.toString() + $D.toString(); //$M . $D;
 
     [this.$ss, this.$sr, this.$day_ss, this.$day_sr] = this.get_sunrise_sunset_for_poles_new2($R, 'S', $tz, $dst);
 
@@ -283,7 +283,7 @@ get_south_pole_sunset_for_date($R, $M, $D, $lat, $tz, $dst) {
     } else if (this.$dat > this.$day_sr && this.$dat < '1231') {
         this.$polar_day = 1; // POLAR DAY
         this.$ss = 0;
-    } else if (this.$dat < this.$day_ss && $dat > '101') {
+    } else if (this.$dat < this.$day_ss && this.$dat > '101') {
         this.$polar_day = 1; // POLAR DAY
         this.$ss = 0;
     } else {
@@ -301,7 +301,7 @@ get_north_pole_sunset_for_date($R, $M, $D, $lat, $tz, $dst) {
         return -9;
     };
 
-    this.$dat = $M . $D;
+    this.$dat = $M.toString() + $D.toString(); //$M . $D;
 
     [ this.$sr, this.$ss, this.$day_sr, this.$day_ss ] = this.get_sunrise_sunset_for_poles_new2($R, 'N', $tz, $dst);
 
@@ -324,7 +324,7 @@ get_north_pole_sunrise_for_date($R, $M, $D, $lat, $tz, $dst) {
         return -9;
     };
 
-    this.$dat = $M . $D;
+    this.$dat = $M.toString() + $D.toString(); //$M . $D;
 
     [ this.$sr, this.$ss, this.$day_sr, this.$day_ss ] = this.get_sunrise_sunset_for_poles_new2($R, 'N', $tz, $dst);
 
