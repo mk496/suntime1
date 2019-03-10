@@ -71,26 +71,31 @@
         color:green;
         font-weight:bold; 
     }
-
+    .suntimeHeading {
+        font: 17px TimesNewRoman; 
+        color:rgb(102, 0, 128);
+        font-weight:bold; 
+    }
 
 
 </style>
 
 <body>
     <!-- V1.0 -->
-    <p><b>Sunrise/set times</b></p>
+    <p class="suntimeHeading">Sunrise/set times</p>
 
     <p><input id="inputDate" type="date" required>
 
         <select id="myselect">
             <option value="volvo">Volvo</option>
         </select>
-        <button onclick="getSunData(this)">OK</button> </p>
+        <button onclick="getSunData(this)">OK</button> 
     <!-- <input id="dSpan" type="number" value="200" text="Days span" size=5> -->
-    <span>Days ahead: </span><span id="sliderValue"></span>
+    <span>   Days ahead: </span><span id="sliderValue"></span>
     <span class="slider-wrapper">
         <input id="dSpan" type="range" min="1" max="1370" step="1" value=200 onchange="getSunData(this)">
     </span>
+</p>
 
 
     <p style="font-size: 12pt">Suntime</p>
