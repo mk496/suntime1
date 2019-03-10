@@ -48,6 +48,32 @@
         margin: 0;
 
     }
+
+    .suntimeDisplay {
+        font: 14px sans-serif; 
+    }
+
+    .suntimeSunset {
+        font: 14px sans-serif; 
+        color:red;
+        font-weight:bold; 
+        
+    }
+
+    .suntimeSunrise {
+        font: 14px sans-serif; 
+        color:blue;
+        font-weight:bold; 
+    }
+
+    .suntimeDayLength {
+        font: 14px sans-serif; 
+        color:green;
+        font-weight:bold; 
+    }
+
+
+
 </style>
 
 <body>
@@ -68,13 +94,12 @@
 
 
     <p style="font-size: 12pt">Suntime</p>
-    <span style="font-size: 12pt">Sunrise: </span><span id="sunrise"
-        style="color:blue;font-weight:bold; font-size: 12pt"> </span>
-    <span style="font-size: 12pt">Sunset: </span><span id="sunset" style="color:red;font-weight:bold; font-size: 12pt">
-    </span>
-    <span style="font-size: 12pt">Day length: </span><span id="dayLen"
-        style="color:green;font-weight:bold; font-size: 12pt"> </span>
-    <span id="polarDay" style="color:green;font-weight:bold; font-size: 12pt"> </span>
+    <span id="coord" class="suntimeDisplay" >Coordinates: </span>
+    <span id="timeZone" class="suntimeDisplay">Time Zone: </br></span>
+    <span class="suntimeDisplay">Sunrise: </span><span id="sunrise"   class="suntimeSunrise"> </span>
+    <span class="suntimeDisplay">Sunset: </span><span id="sunset" class="suntimeSunset">    </span>
+    <span class="suntimeDisplay" >Day length: </span><span id="dayLen"   class="suntimeDayLength"> </span>
+    <span id="polarDay" class="suntimeDayLength"> </span>
 
 
     <script>
@@ -155,16 +180,18 @@
             let sunSet = oLocation1.get_sunSet();
             let dayLen = oLocation1.getDayLen();
             let polarDay = oLocation1.getPolarDay();
-
+            
+            document.getElementById("coord").innerHTML = "Coordinates:" + this.locationsJSON[selectedOption].latitude + ", " + this.locationsJSON[selectedOption].longitude + ","; 
+            document.getElementById("timeZone").innerHTML = "Timezone:" + this.locationsJSON[selectedOption].timeZone + ", " ;
             document.getElementById("sunrise").innerHTML = PrefixSR + sunRise[0] + ":" + sunRise[1];
             document.getElementById("sunset").innerHTML = PrefixSS + sunSet[0] + ":" + sunSet[1];
-            document.getElementById("dayLen").innerHTML = PrefixDD + dayLen[0] + ":" + dayLen[1];
+            document.getElementById("dayLen").innerHTML = PrefixDD + dayLen[0] + ":" + dayLen[1] ;
 
             if (polarDay == 1) {
-                document.getElementById("polarDay").innerHTML = "Polar Day";
+                document.getElementById("polarDay").innerHTML = "Polar Day" + " </br>";
             }
-            else if (polarDay == -1) { document.getElementById("polarDay").innerHTML = "Polar Night" }
-            else { document.getElementById("polarDay").innerHTML = " " };
+            else if (polarDay == -1) { document.getElementById("polarDay").innerHTML = "Polar Night" + " </br>" }
+            else { document.getElementById("polarDay").innerHTML = " " + " </br>"};
 
             let daysSpan = document.getElementById("dSpan").value;
 
