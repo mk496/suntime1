@@ -76,29 +76,21 @@
         color:rgb(102, 0, 128);
         font-weight:bold; 
     }
-
-
 </style>
 
 <body>
     <!-- V1.0 -->
     <p class="suntimeHeading">Sunrise/set times</p>
-
     <p><input id="inputDate" type="date" required>
-
         <select id="myselect">
             <option value="volvo">Volvo</option>
         </select>
         <button onclick="getSunData(this)">OK</button> 
-    <!-- <input id="dSpan" type="number" value="200" text="Days span" size=5> -->
     <span>   Days ahead: </span><span id="sliderValue"></span>
     <span class="slider-wrapper">
         <input id="dSpan" type="range" min="1" max="1370" step="1" value=200 onchange="getSunData(this)">
     </span>
 </p>
-
-
-    <p style="font-size: 12pt">Suntime</p>
     <span id="coord" class="suntimeDisplay" >Coordinates: </span>
     <span id="timeZone" class="suntimeDisplay">Time Zone: </br></span>
     <span class="suntimeDisplay">Sunrise: </span><span id="sunrise"   class="suntimeSunrise"> </span>
@@ -108,7 +100,6 @@
 
 
     <script>
-
         var slider = document.getElementById("dSpan");
         var output = document.getElementById("sliderValue");
         output.innerHTML = slider.value;
@@ -127,7 +118,6 @@
 
         function setDateMIK() {
             var mikDate = new Date();
-
             var mikMM = 0;
             if (
                 mikDate.getMonth() < 8
@@ -137,10 +127,7 @@
             } else {
                 mikMM = mikDate.getMonth() + 1;
             }
-
             var mikDD = 0;
-
-
             if (
                 mikDate.getDate() < 10
             ) {
@@ -149,7 +136,6 @@
             } else {
                 mikDD = mikDate.getDate() + 1;
             }
-
             let formatted_date = mikDate.getFullYear() + "-" + mikMM + "-" + mikDD;
             document.getElementById('inputDate').value = formatted_date;
         };
@@ -159,9 +145,7 @@
         let PrefixSS = " ";
         let PrefixDD = " ";
 
-
         function getSunData(context) {
-
 
             let oDate0 = new Date(document.getElementById("inputDate").value);
             var mindate = new Date(document.getElementById("inputDate").value);
@@ -213,9 +197,7 @@
             getSunData();
         })();
 
-
         this.select = document.getElementById("myselect");
-
         var options = this.locationsJSON
 
         // Optional: Clear all existing options first:

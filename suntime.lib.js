@@ -212,11 +212,6 @@ class Location {
     };
 
     set_shift_for_date($iv_R, $iv_M, $iv_D, $iv_shift) {
-
-        // let $lv_date = mktime(0, 0, 0, $iv_M, $iv_D + $iv_shift, $iv_R);
-        //let $lv_date = new Date($iv_R, $iv_M, $iv_D + $iv_shift, 0, 0, 0, 0).getTime() / 1000;
-        //this.md_u_date = $lv_date;
-        // $arr_date = getdate($lv_date);
         let $arr_date = new Date($iv_R, $iv_M, $iv_D + $iv_shift, 0, 0, 0, 0);
 
 
