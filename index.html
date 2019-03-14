@@ -107,6 +107,8 @@
     <script>
         var slider = document.getElementById("dSpan");
         var output = document.getElementById("sliderValue");
+        // var mindate = new Date(document.getElementById("inputDate").value),
+        //        maxdate = 0;
         output.innerHTML = slider.value;
 
         slider.oninput = function () {
@@ -117,9 +119,8 @@
         var aSunDataDL = [];  // DayLength
 
         // define the x scale (horizontal)
-         let
-          mindate = new Date(2019, 2, 14),
-             maxdate = new Date(2019, 11, 31);
+        // let mindate = new Date(2019, 2, 14),
+        //     maxdate = new Date(2019, 11, 31);
 
         function setDateforDisplay() {
             var mikDate = new Date();
@@ -145,6 +146,9 @@
             document.getElementById('inputDate').value = formatted_date;
         };
         window.onload = setDateforDisplay();
+        var mindate = new Date(document.getElementById("inputDate").value),
+               maxdate = 0;
+               mindata = mindate + 2;
 
         let PrefixSR = " ";
         let PrefixSS = " ";
@@ -153,7 +157,7 @@
         function getSunData(context) {
 
             let oDate0 = new Date(document.getElementById("inputDate").value);
-            var mindate = new Date(document.getElementById("inputDate").value);
+            
              //  let mindate = new Date(2019, 1, 0),
         //      maxdate = new Date(2019, 12, 31);
 
