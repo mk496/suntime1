@@ -50,31 +50,36 @@
     }
 
     .suntimeDisplay {
-        font: 14px sans-serif; 
+        font: 14px sans-serif;
     }
 
     .suntimeSunset {
-        font: 14px sans-serif; 
-        color:red;
-        font-weight:bold; 
-        
+        font: 14px sans-serif;
+        color: red;
+        font-weight: bold;
+
     }
 
     .suntimeSunrise {
-        font: 14px sans-serif; 
-        color:blue;
-        font-weight:bold; 
+        font: 14px sans-serif;
+        color: blue;
+        font-weight: bold;
     }
 
     .suntimeDayLength {
-        font: 14px sans-serif; 
-        color:green;
-        font-weight:bold; 
+        font: 14px sans-serif;
+        color: green;
+        font-weight: bold;
     }
+
     .suntimeHeading {
-        font: 17px TimesNewRoman; 
-        color:rgb(102, 0, 128);
-        font-weight:bold; 
+        font: 17px TimesNewRoman;
+        color: rgb(102, 0, 128);
+        font-weight: bold;
+    }
+
+    body {
+        background-color: lightblue;
     }
 </style>
 
@@ -85,17 +90,17 @@
         <select id="myselect">
             <option value="volvo">Volvo</option>
         </select>
-        <button onclick="getSunData(this)">OK</button> 
-    <span>   Days ahead: </span><span id="sliderValue"></span>
-    <span class="slider-wrapper">
-        <input id="dSpan" type="range" min="1" max="1370" step="1" value=200 onchange="getSunData(this)">
-    </span>
-</p>
-    <span id="coord" class="suntimeDisplay" >Coordinates: </span>
+        <button onclick="getSunData(this)">OK</button>
+        <span> Days ahead: </span><span id="sliderValue"></span>
+        <span class="slider-wrapper">
+            <input id="dSpan" type="range" min="1" max="1370" step="1" value=200 onchange="getSunData(this)">
+        </span>
+    </p>
+    <span id="coord" class="suntimeDisplay">Coordinates: </span>
     <span id="timeZone" class="suntimeDisplay">Time Zone: </br></span>
-    <span class="suntimeDisplay">Sunrise: </span><span id="sunrise"   class="suntimeSunrise"> </span>
-    <span class="suntimeDisplay">Sunset: </span><span id="sunset" class="suntimeSunset">    </span>
-    <span class="suntimeDisplay" >Day length: </span><span id="dayLen"   class="suntimeDayLength"> </span>
+    <span class="suntimeDisplay">Sunrise: </span><span id="sunrise" class="suntimeSunrise"> </span>
+    <span class="suntimeDisplay">Sunset: </span><span id="sunset" class="suntimeSunset"> </span>
+    <span class="suntimeDisplay">Day length: </span><span id="dayLen" class="suntimeDayLength"> </span>
     <span id="polarDay" class="suntimeDayLength"> </span>
 
 
@@ -115,8 +120,7 @@
         let mindate = new Date(2019, 2, 4),
             maxdate = new Date(2019, 2, 30);
 
-
-        function setDateMIK() {
+        function setDateforDisplay() {
             var mikDate = new Date();
             var mikMM = 0;
             if (
@@ -139,7 +143,7 @@
             let formatted_date = mikDate.getFullYear() + "-" + mikMM + "-" + mikDD;
             document.getElementById('inputDate').value = formatted_date;
         };
-        window.onload = setDateMIK();
+        window.onload = setDateforDisplay();
 
         let PrefixSR = " ";
         let PrefixSS = " ";
@@ -169,18 +173,18 @@
             let sunSet = oLocation1.get_sunSet();
             let dayLen = oLocation1.getDayLen();
             let polarDay = oLocation1.getPolarDay();
-            
-            document.getElementById("coord").innerHTML = "Coordinates:" + this.locationsJSON[selectedOption].latitude + ", " + this.locationsJSON[selectedOption].longitude + ","; 
-            document.getElementById("timeZone").innerHTML = "Timezone:" + this.locationsJSON[selectedOption].timeZone + ", " ;
+
+            document.getElementById("coord").innerHTML = "Coordinates:" + this.locationsJSON[selectedOption].latitude + ", " + this.locationsJSON[selectedOption].longitude + ",";
+            document.getElementById("timeZone").innerHTML = "Timezone:" + this.locationsJSON[selectedOption].timeZone + ", ";
             document.getElementById("sunrise").innerHTML = PrefixSR + sunRise[0] + ":" + sunRise[1];
             document.getElementById("sunset").innerHTML = PrefixSS + sunSet[0] + ":" + sunSet[1];
-            document.getElementById("dayLen").innerHTML = PrefixDD + dayLen[0] + ":" + dayLen[1] ;
+            document.getElementById("dayLen").innerHTML = PrefixDD + dayLen[0] + ":" + dayLen[1];
 
             if (polarDay == 1) {
                 document.getElementById("polarDay").innerHTML = "Polar Day" + " </br>";
             }
             else if (polarDay == -1) { document.getElementById("polarDay").innerHTML = "Polar Night" + " </br>" }
-            else { document.getElementById("polarDay").innerHTML = " " + " </br>"};
+            else { document.getElementById("polarDay").innerHTML = " " + " </br>" };
 
             let daysSpan = document.getElementById("dSpan").value;
 
@@ -188,9 +192,7 @@
             if (this.select != null) {
                 selectedOption = this.select.selectedIndex;
             }
-
             getDataSet(oDate0, daysSpan, this, selectedOption);
-
         };
 
         (function init() {
@@ -220,8 +222,6 @@
 
             for (i = 0; i < daysSpan; i++) {
 
-                //oDate.addDays(i);
-
                 oDate.setDate(oDate1.getDate() + 1);
 
                 oYear = oDate.getFullYear();
@@ -229,10 +229,9 @@
                 oMonth = oMonth + 1;
                 oDay = oDate.getDate();
 
-
                 oLocation1 = new Location(context.locationsJSON[locationIndex].city, oYear, oMonth, oDay, context.locationsJSON[locationIndex].latitude,
                     context.locationsJSON[locationIndex].longitude, 0, 0, context.locationsJSON[locationIndex].timeZone, 0);
-                //    oDay = oDay + 1;
+
                 sunRiseRaw = oLocation1.get_sunRise_raw();
                 sunSetRaw = oLocation1.get_sunSet_raw();
                 sunRise = oLocation1.get_sunRise();
@@ -346,7 +345,7 @@
                 d.polarDay = d[4];
             });
             // Scale the range of the data - SunSet
-            x.domain(d3.extent(data1, function (d) { return d.x; }));
+            x.domain(d3.extent(data1, function (d) { return (d.x); }));
             //            x.domain([0, 1200])
             // y.domain([0, d3.max(data1, function(d) { return d.y; })]);
             y.domain([0, 24]);
@@ -425,26 +424,23 @@
                     return "yellow";
                 })
                 .attr("cx", function (d) { return x(d.x); })
-                .attr("cy", function (d) { 
-                    if ( d.polarDay == 0 )
-                     { return y(d.y); }
-                    else if (d.polarDay == 1) 
-                    { return y(24); }
-                    else if (d.polarDay == -1) 
-                    {  return y(0); }
-                     }
-                     )
+                .attr("cy", function (d) {
+                    if (d.polarDay == 0) { return y(d.y); }
+                    else if (d.polarDay == 1) { return y(24); }
+                    else if (d.polarDay == -1) { return y(0); }
+                }
+                )
                 .on("mouseover", function (d) {
 
-                    if ( d.polarDay == 0 ) {
+                    if (d.polarDay == 0) {
                         div.transition()
                             .duration(200)
                             .style("opacity", .9);
                         div.html("Day length " + d.dL + "<br/>" + d.date)
                             .style("left", (d3.event.pageX) + "px")
                             .style("top", (d3.event.pageY - 28) + "px");;
-                     }
-                     else if (d.polarDay == 1) {
+                    }
+                    else if (d.polarDay == 1) {
                         div.transition()
                             .duration(200)
                             .style("opacity", .9);
@@ -461,7 +457,7 @@
                             .style("top", (d3.event.pageY - 28) + "px");;
                     }
 
-                   
+
                 })
                 .on("mouseout", function (d) {
                     div.transition()
