@@ -148,16 +148,16 @@
         window.onload = setDateforDisplay();
         var mindate = new Date(document.getElementById("inputDate").value),
                maxdate = 0;
-               mindata = mindate + 2;
+//               this.mindata = this.mindate + 2;
 
         let PrefixSR = " ";
         let PrefixSS = " ";
         let PrefixDD = " ";
-
+        that = this;
         function getSunData(context) {
 
             let oDate0 = new Date(document.getElementById("inputDate").value);
-            
+        //    that.mindate =  oDate0;
              //  let mindate = new Date(2019, 1, 0),
         //      maxdate = new Date(2019, 12, 31);
 
@@ -203,7 +203,7 @@
         };
 
         (function init() {
-            getSunData();
+            getSunData(this);
         })();
 
         this.select = document.getElementById("myselect");
@@ -224,17 +224,17 @@
             let oMonth = oDate1.getMonth();
             oMonth = oMonth + 1;
             let oDay = oDate1.getDate();
-            let oDate = oDate1;
+            let oDate2 = oDate1;
 
 
             for (i = 0; i < daysSpan; i++) {
 
-                oDate.setDate(oDate1.getDate() + 1);
+                oDate2.setDate(oDate1.getDate() + 1);
 
-                oYear = oDate.getFullYear();
-                oMonth = oDate.getMonth();
+                oYear = oDate2.getFullYear();
+                oMonth = oDate2.getMonth();
                 oMonth = oMonth + 1;
-                oDay = oDate.getDate();
+                oDay = oDate2.getDate();
 
                 oLocation1 = new Location(context.locationsJSON[locationIndex].city, oYear, oMonth, oDay, context.locationsJSON[locationIndex].latitude,
                     context.locationsJSON[locationIndex].longitude, 0, 0, context.locationsJSON[locationIndex].timeZone, 0);
@@ -265,7 +265,7 @@
                 aSunDataDL.push([sunData.x, sunData.y, sunData.sEvent, sunData.date, sunData.polarDay]);
 
                 // last
-                maxdate = oDate;
+                maxdate = oDate2;
             }
 
             // D3
@@ -281,9 +281,10 @@
             // Set the ranges
             var x = d3.time.scale().range([0, width]);
             var y = d3.scale.linear().range([height, 0]);
+            var mindate1 = new Date(document.getElementById("inputDate").value);
 
             var xScale = d3.time.scale()
-                .domain([mindate, maxdate])    // values between for month of january
+                .domain([mindate1, maxdate])    // values between for month of january
                 .range([padding, width - padding * 2]);   // map these the the chart width = total width minus padding at both sides
 
             //  Define the axes
