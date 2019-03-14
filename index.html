@@ -118,8 +118,8 @@
 
         // define the x scale (horizontal)
          let
-          mindate = new Date(2019, 1, 0),
-             maxdate = new Date(2019, 12, 31);
+          mindate = new Date(2019, 2, 14),
+             maxdate = new Date(2019, 11, 31);
 
         function setDateforDisplay() {
             var mikDate = new Date();
@@ -348,9 +348,7 @@
                 d.polarDay = d[4];
             });
             // Scale the range of the data - SunSet
-            x.domain(d3.extent(data1, function (d) { return (d.x); }));
-            //            x.domain([0, 1200])
-            // y.domain([0, d3.max(data1, function(d) { return d.y; })]);
+            x.domain(d3.extent(data1, function (d) { return (d.x) ; }));
             y.domain([0, 24]);
 
             // Add the valueline path.
@@ -407,7 +405,6 @@
                 });
 
             // Add the scatterplot  - DL
-
             // Add the valueline path.
             svg.append("path")
                 .attr("class", "line")
