@@ -117,29 +117,7 @@
 
         // define the x scale (horizontal)
 
-        function setDateforDisplay() {
-            var mikDate = new Date();
-            var mikMM = 0;
-            if (
-                mikDate.getMonth() < 8
-            ) {
-                mikMM = mikDate.getMonth() + 1;
-                mikMM = "0" + mikMM;
-            } else {
-                mikMM = mikDate.getMonth() + 1;
-            }
-            var mikDD = 0;
-            if (
-                mikDate.getDate() < 10
-            ) {
-
-                mikDD = "0" + mikDate.getDate();
-            } else {
-                mikDD = mikDate.getDate() + 1;
-            }
-            let formatted_date = mikDate.getFullYear() + "-" + mikMM + "-" + mikDD;
-            document.getElementById('inputDate').value = formatted_date;
-        };
+        
         window.onload = setDateforDisplay();
         var mindate = new Date(document.getElementById("inputDate").value),
             maxdate = 0;
@@ -164,6 +142,29 @@
         };
 
         // ***************** FUNCTIONS ***********************
+
+        function setDateforDisplay() {
+            var mikDate = new Date();
+            var mikMM = 0;
+            if (
+                mikDate.getMonth() < 8
+            ) {
+                mikMM = mikDate.getMonth() + 1;
+                mikMM = "0" + mikMM;
+            } else {
+                mikMM = mikDate.getMonth() + 1;
+            }
+            var mikDD = 0;
+            if (
+                mikDate.getDate() < 10
+            ) {
+                mikDD = "0" + mikDate.getDate();
+            } else {
+                mikDD = mikDate.getDate() + 1;
+            }
+            let formatted_date = mikDate.getFullYear() + "-" + mikMM + "-" + mikDD;
+            document.getElementById('inputDate').value = formatted_date;
+        };
         function getSunData(context) {
 
             let oDate0 = new Date(document.getElementById("inputDate").value);
@@ -253,7 +254,6 @@
                 sunData.sEvent = dayLen[0].toString() + ":" + dayLen[1].toString();
                 sunData.polarDay = polarDay;
                 aSunDataDL.push([sunData.x, sunData.y, sunData.sEvent, sunData.date, sunData.polarDay]);
-
                 // last
                 maxdate = oDate2;
             }
@@ -272,7 +272,7 @@
             var mindateNew = new Date(document.getElementById("inputDate").value);
 
             var xScale = d3.time.scale()
-                .domain([mindateNew, maxdate])    // values between for month of january
+                .domain([mindateNew, maxdate])    
                 .range([padding, width - padding * 2]);   // map these the the chart width = total width minus padding at both sides
 
             //  Define the axes
@@ -321,7 +321,6 @@
                 d.sS = d[2];
                 d.date = d[3];
             });
-
 
             dataDL = [];
             var dataDL = aSunDataDL;
