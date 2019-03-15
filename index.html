@@ -116,7 +116,7 @@
         var aSunDataDL = [];  // DayLength
 
         // define the x scale (horizontal)
-        
+
         function setDateforDisplay() {
             var mikDate = new Date();
             var mikMM = 0;
@@ -148,6 +148,22 @@
         let PrefixSS = " ";
         let PrefixDD = " ";
 
+        (function init() {
+            getSunData(this);
+        })();
+
+        this.select = document.getElementById("myselect");
+        var options = this.locationsJSON
+
+        // Optional: Clear all existing options first:
+        this.select.innerHTML = "";
+        // Populate list with options:
+        for (var i = 0; i < options.length; i++) {
+            var opt = options[i].city;
+            this.select.innerHTML += "<option value=\"" + opt + "\">" + opt + "</option>";
+        };
+
+        // ***************** FUNCTIONS ***********************
         function getSunData(context) {
 
             let oDate0 = new Date(document.getElementById("inputDate").value);
@@ -190,21 +206,6 @@
                 selectedOption = this.select.selectedIndex;
             }
             getDataSet(oDate0, daysSpan, this, selectedOption);
-        };
-
-        (function init() {
-            getSunData(this);
-        })();
-
-        this.select = document.getElementById("myselect");
-        var options = this.locationsJSON
-
-        // Optional: Clear all existing options first:
-        this.select.innerHTML = "";
-        // Populate list with options:
-        for (var i = 0; i < options.length; i++) {
-            var opt = options[i].city;
-            this.select.innerHTML += "<option value=\"" + opt + "\">" + opt + "</option>";
         };
 
         function getDataSet(oDate1, daysSpan, context, locationIndex) {
@@ -268,10 +269,10 @@
             // Set the ranges
             var x = d3.time.scale().range([0, width]);
             var y = d3.scale.linear().range([height, 0]);
-            var mindate1 = new Date(document.getElementById("inputDate").value);
+            var mindateNew = new Date(document.getElementById("inputDate").value);
 
             var xScale = d3.time.scale()
-                .domain([mindate1, maxdate])    // values between for month of january
+                .domain([mindateNew, maxdate])    // values between for month of january
                 .range([padding, width - padding * 2]);   // map these the the chart width = total width minus padding at both sides
 
             //  Define the axes
@@ -297,7 +298,7 @@
                 .attr("width", width + margin.left + margin.right)
                 .attr("height", height + margin.top + margin.bottom)
                 .append("g")
-                .attr("transform","translate(" + margin.left + "," + margin.top + ")");
+                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
             // Get the data
             data = [];
@@ -334,7 +335,7 @@
                 d.polarDay = d[4];
             });
             // Scale the range of the data - SunSet
-            x.domain(d3.extent(data1, function (d) { return (d.x) ; }));
+            x.domain(d3.extent(data1, function (d) { return (d.x); }));
             y.domain([0, 24]);
 
             // Add the valueline path.
