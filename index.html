@@ -1,5 +1,7 @@
 <!DOCTYPE html>
+
 <html>
+<!-- GPL by M.Karaskiewicz 2019 - V1.1 with coordinates - beta not stable -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script src="https://d3js.org/d3.v3.min.js"></script>
 <script src="https://d3js.org/d3-scale.v2.min.js"></script>
@@ -10,7 +12,6 @@
 <meta charset="utf-8">
 <style>
     /* set the CSS */
-
     body {
         font: 12px Arial;
     }
@@ -48,30 +49,66 @@
         margin: 0;
 
     }
+
+    .suntimeDisplay {
+        font: 14px sans-serif;
+    }
+
+    .suntimeSunset {
+        font: 14px sans-serif;
+        color: red;
+        font-weight: bold;
+
+    }
+
+    .suntimeSunrise {
+        font: 14px sans-serif;
+        color: blue;
+        font-weight: bold;
+    }
+
+    .suntimeDayLength {
+        font: 14px sans-serif;
+        color: green;
+        font-weight: bold;
+    }
+
+    .suntimeHeading {
+        font: 17px TimesNewRoman;
+        color: rgb(102, 0, 128);
+        font-weight: bold;
+    }
+
+    body {
+        background-color: lightblue;
+    }
 </style>
 
 <body>
     <!-- V1.0 -->
-    <p><b>Sunrise/set times</b></p>
-
-    <p><input id="inputDate" type="date" required>
-
-        <select id="myselect">
-            <option value="volvo">Volvo</option>
+    <p class="suntimeHeading">Sunrise/set times</p>
+    <p>Date:<input id="inputDate" type="date">
+        Location:<select id="myselect">
+            <option value="0">.</option>
         </select>
-        <!-- <input id="dSpan" type="number" value="200" text="Days span" size=5> -->
+        Or (Latitude:<input id="inputLatitude" value=0 type="number">
+        Longitude:<input id="inputLongitude" value=0 type="number">
+        TimeZone:<input id="inputTimezone" value=0 type="number">)
+        <button onclick="getSunData(this)">OK</button>
+        <span> Days ahead: </span><span id="sliderValue"></span>
         <span class="slider-wrapper">
-            <input id="dSpan" type="range" min="1" max="1370" step="1" onchange="getSunData(this)">
+            <input id="dSpan" type="range" min="1" max="1370" step="1" value=200 onchange="getSunData(this)">
         </span>
-        Days ahead: <span id="sliderValue"></span>
-        <button onclick="getSunData(this)">OK</button> </p>
-    <p>Suntime</p>
-    <span id="sunrise">Sunrise: </span>
-    <span id="sunset"> Sunset: </span>
-    <span id="dayLen"> Day duration: </span>
+    </p>
+    <span id="coord" class="suntimeDisplay">Coordinates: </span>
+    <span id="timeZone" class="suntimeDisplay">Time Zone: </br></span>
+    <span class="suntimeDisplay">Sunrise: </span><span id="sunrise" class="suntimeSunrise"> </span>
+    <span class="suntimeDisplay">Sunset: </span><span id="sunset" class="suntimeSunset"> </span>
+    <span class="suntimeDisplay">Day length: </span><span id="dayLen" class="suntimeDayLength"> </span>
+    <span id="polarDay" class="suntimeDayLength"> </span>
+
 
     <script>
-
         var slider = document.getElementById("dSpan");
         var output = document.getElementById("sliderValue");
         output.innerHTML = slider.value;
@@ -81,77 +118,24 @@
         }
         var aSunDataSR = [];
         var aSunDataSS = [];
+        var aSunDataDL = [];  // DayLength
 
-        function setDateMIK() {
-            var mikDate = new Date();
-
-            var mikMM = 0;
-            if (
-                mikDate.getMonth() < 8
-            ) {
-                mikMM = mikDate.getMonth() + 1;
-                mikMM = "0" + mikMM;
-            } else {
-                mikMM = mikDate.getMonth() + 1;
-            }
-
-            let formatted_date = mikDate.getFullYear() + "-" + mikMM + "-" + mikDate.getDate()
-            document.getElementById('inputDate').value = formatted_date;
-        };
-        window.onload = setDateMIK();
-
-        let PrefixSR = "Sunrise:";
-        let PrefixSS = "Sunset:";
-        let PrefixDD = "Day duration:";
-
-        function getSunData(context) {
+        // define the x scale (horizontal)
 
 
-            let oDate = new Date(document.getElementById("inputDate").value);
+        window.onload = setDateforDisplay();
+        var mindate = new Date(document.getElementById("inputDate").value),
+            maxdate = 0;
 
-            let oYear = oDate.getFullYear();
-            let oMonth = oDate.getMonth();
-            oMonth = oMonth + 1;
-            let oDay = oDate.getDate();
-
-            this.locationsJSON = locations;
-
-            var selectedOption = 0;
-            if (this.select != null) {
-                selectedOption = this.select.selectedIndex;
-            }
-
-            let oLocation1 = new Location(this.locationsJSON[selectedOption].city, oYear, oMonth, oDay, this.locationsJSON[selectedOption].latitude,
-                this.locationsJSON[selectedOption].longitude, 0, 0, this.locationsJSON[selectedOption].timeZone, 0);
-
-            let sunRise = oLocation1.get_sunRise();
-            let sunSet = oLocation1.get_sunSet();
-            let dayLen = oLocation1.getDayLen();
-
-            document.getElementById("sunrise").innerHTML = PrefixSR + sunRise[0] + ":" + sunRise[1];
-            document.getElementById("sunset").innerHTML = PrefixSS + sunSet[0] + ":" + sunSet[1];
-            document.getElementById("dayLen").innerHTML = PrefixDD + dayLen[0] + ":" + dayLen[1];
-            console.log(sunRise);
-
-            let daysSpan = document.getElementById("dSpan").value;
-
-            var selectedOption = 0;
-            if (this.select != null) {
-                selectedOption = this.select.selectedIndex;
-            }
-
-            getData(oDate, daysSpan, this, selectedOption);
-        };
+        let PrefixSR = " ";
+        let PrefixSS = " ";
+        let PrefixDD = " ";
 
         (function init() {
-            getSunData();
+            getSunData(this);
         })();
 
-
         this.select = document.getElementById("myselect");
-        // var options = [
-        //     ["Poznan", 52.408333, 16.934167], ["Grybow", 49.624444, 20.948333]
-        // ];
         var options = this.locationsJSON
 
         // Optional: Clear all existing options first:
@@ -162,33 +146,127 @@
             this.select.innerHTML += "<option value=\"" + opt + "\">" + opt + "</option>";
         };
 
-        function getData(oDate1, daysSpan, context, locationIndex) {
+        // ***************** FUNCTIONS ***********************
+
+        function setDateforDisplay() {
+            var mikDate = new Date();
+            var mikMM = 0;
+            if (
+                mikDate.getMonth() < 8
+            ) {
+                mikMM = mikDate.getMonth() + 1;
+                mikMM = "0" + mikMM;
+            } else {
+                mikMM = mikDate.getMonth() + 1;
+            }
+            var mikDD = 0;
+            if (
+                mikDate.getDate() < 10
+            ) {
+                mikDD = "0" + mikDate.getDate();
+            } else {
+                mikDD = mikDate.getDate() + 1;
+            }
+            let formatted_date = mikDate.getFullYear() + "-" + mikMM + "-" + mikDD;
+            document.getElementById('inputDate').value = formatted_date;
+        };
+        function getSunData(context) {
+
+            let oDate0 = new Date(document.getElementById("inputDate").value);
+            let oYear = oDate0.getFullYear();
+            let oMonth = oDate0.getMonth();
+            oMonth = oMonth + 1;
+            let oDay = oDate0.getDate();
+
+            this.locationsJSON = locations;
+
+            var selectedOption = 0;
+            if (this.select != null) {
+                selectedOption = this.select.selectedIndex;
+            }
+
+            let lvLongitude = parseFloat(document.getElementById("inputLongitude").value);
+            let lvLatitude = parseFloat(document.getElementById("inputLatitude").value);
+            let lvTimeZone = parseFloat(document.getElementById("inputTimezone").value);
+            let bySelection = true;
+
+            // let oLocation1 = new Location(this.locationsJSON[selectedOption].city, oYear, oMonth, oDay, this.locationsJSON[selectedOption].latitude,
+            //     this.locationsJSON[selectedOption].longitude, 0, 0, this.locationsJSON[selectedOption].timeZone, 0);
+            let oLocation1 = null;
+            if ((Math.abs(lvLongitude) + Math.abs(lvLatitude) + Math.abs(lvTimeZone)) != 0) {
+                oLocation1 = new Location("Coord", oYear, oMonth, oDay,
+                    lvLatitude, lvLongitude, 0, 0, lvTimeZone, 0);
+                bySelection = false;
+            }
+            else {
+                var locationIndex = selectedOption;
+                oLocation1 = new Location(context.locationsJSON[locationIndex].city, oYear, oMonth, oDay, context.locationsJSON[locationIndex].latitude,
+                    context.locationsJSON[locationIndex].longitude, 0, 0, context.locationsJSON[locationIndex].timeZone, 0);
+                lvLongitude = this.locationsJSON[selectedOption].longitude;
+                lvLatitude = this.locationsJSON[selectedOption].latitude;
+                lvTimeZone = this.locationsJSON[selectedOption].timeZone;
+            }
+
+            let sunRise = oLocation1.get_sunRise();
+            let sunSet = oLocation1.get_sunSet();
+            let dayLen = oLocation1.getDayLen();
+            let polarDay = oLocation1.getPolarDay();
+
+            document.getElementById("coord").innerHTML = "Coordinates:" + lvLatitude + ", " + lvLongitude + ",";
+            document.getElementById("timeZone").innerHTML = "Timezone:" + lvTimeZone + ", ";
+            document.getElementById("sunrise").innerHTML = PrefixSR + sunRise[0] + ":" + sunRise[1];
+            document.getElementById("sunset").innerHTML = PrefixSS + sunSet[0] + ":" + sunSet[1];
+            document.getElementById("dayLen").innerHTML = PrefixDD + dayLen[0] + ":" + dayLen[1];
+
+            if (polarDay == 1) {
+                document.getElementById("polarDay").innerHTML = "Polar Day" + " </br>";
+            }
+            else if (polarDay == -1) { document.getElementById("polarDay").innerHTML = "Polar Night" + " </br>" }
+            else { document.getElementById("polarDay").innerHTML = " " + " </br>" };
+
+            let daysSpan = document.getElementById("dSpan").value;
+
+            var selectedOption = 0;
+            if (this.select != null) {
+                selectedOption = this.select.selectedIndex;
+            }
+            // getDataSet(oDate0, daysSpan, this, selectedOption);
+
+
+            getDataSet(oDate0, daysSpan, this, selectedOption, lvLongitude, lvLatitude, lvTimeZone, bySelection);
+        };
+
+        function getDataSet(oDate1, daysSpan, context, locationIndex, iPlongitude, iPlatitude, iPtimeZone, bySelection) {
             var i;
-            var sunData = { x: 0, y: 0, sEvent: 0, date: "" };
+            var sunData = { x: 0, y: 0, sEvent: 0, date: "", polarDay: 0 };
             let oYear = oDate1.getFullYear();
             let oMonth = oDate1.getMonth();
             oMonth = oMonth + 1;
             let oDay = oDate1.getDate();
-            let oDate = oDate1;
+            let oDate2 = oDate1;
+
             for (i = 0; i < daysSpan; i++) {
 
-                //oDate.addDays(i);
+                oDate2.setDate(oDate1.getDate() + 1);
 
-                oDate.setDate(oDate1.getDate() + 1);
-
-                oYear = oDate.getFullYear();
-                oMonth = oDate.getMonth();
+                oYear = oDate2.getFullYear();
+                oMonth = oDate2.getMonth();
                 oMonth = oMonth + 1;
-                oDay = oDate.getDate();
+                oDay = oDate2.getDate();
 
-                // oLocation1 = new Location("Poznan", oYear, oMonth, oDay, 52.408333, 16.934167, 0, 0, 1, 0);
-                oLocation1 = new Location(context.locationsJSON[locationIndex].city, oYear, oMonth, oDay, context.locationsJSON[locationIndex].latitude,
-                    context.locationsJSON[locationIndex].longitude, 0, 0, context.locationsJSON[locationIndex].timeZone, 0);
-                oDay = oDay + 1;
+                if (!bySelection) {
+                    oLocation1 = new Location("coord", oYear, oMonth, oDay, iPlatitude, iPlongitude, 0, 0, iPtimeZone, 0);
+                }
+                else {
+                    oLocation1 = new Location(context.locationsJSON[locationIndex].city, oYear, oMonth, oDay, context.locationsJSON[locationIndex].latitude,
+                        context.locationsJSON[locationIndex].longitude, 0, 0, context.locationsJSON[locationIndex].timeZone, 0);
+                }
                 sunRiseRaw = oLocation1.get_sunRise_raw();
                 sunSetRaw = oLocation1.get_sunSet_raw();
                 sunRise = oLocation1.get_sunRise();
                 sunSet = oLocation1.get_sunSet();
+                dayLen = oLocation1.getDayLen();
+                polarDay = oLocation1.getPolarDay();
 
 
                 sunData.x = i * 10;
@@ -201,29 +279,41 @@
                 sunData.y = sunSetRaw;
                 sunData.sEvent = sunSet;
                 aSunDataSS.push([sunData.x, sunData.y, sunData.sEvent, sunData.date]);
+
+                sunData.x = i * 10;
+                sunData.y = dayLen[0] + dayLen[1] / 60;
+                sunData.sEvent = dayLen[0].toString() + ":" + dayLen[1].toString();
+                sunData.polarDay = polarDay;
+                aSunDataDL.push([sunData.x, sunData.y, sunData.sEvent, sunData.date, sunData.polarDay]);
+                // last
+                maxdate = oDate2;
             }
 
             // D3
             d3.select("svg").remove();
 
-            var margin = { top: 30, right: 20, bottom: 30, left: 50 },
-                width = 1400 - margin.left - margin.right,
-                height = 470 - margin.top - margin.bottom;
+            var margin = { top: 30, right: 15, bottom: 30, left: 20 },
+                width = 1500 - margin.left - margin.right,
+                height = 470 - margin.top - margin.bottom,
+                padding = 0;
 
             // Set the ranges
             var x = d3.time.scale().range([0, width]);
             var y = d3.scale.linear().range([height, 0]);
-            //var y = d3.scaleLinear([0.24]).domain([0, 24]).range([height,0]);
+            var mindateNew = new Date(document.getElementById("inputDate").value);
 
-            // Define the axes
-            var xAxis = d3.svg.axis().scale(x)
-                .orient("bottom").ticks(5);
+            var xScale = d3.time.scale()
+                .domain([mindateNew, maxdate])
+                .range([padding, width - padding * 2]);   // map these the the chart width = total width minus padding at both sides
+
+            //  Define the axes
+            var xAxis = d3.svg.axis().scale(xScale)
+                .orient("bottom").ticks(15);
 
             var yAxis = d3.svg.axis().scale(y)
                 .orient("left").ticks(5);
 
             // Define the line
-
             var valueline = d3.svg.line()
                 .x(function (d) { return x(d.x); })
                 .y(function (d) { return y(d.y); });
@@ -234,21 +324,17 @@
                 .style("opacity", 0);
 
             // Adds the svg canvas
-
-
             var svg = d3.select("body")
                 .append("svg")
                 .attr("width", width + margin.left + margin.right)
                 .attr("height", height + margin.top + margin.bottom)
                 .append("g")
-                .attr("transform",
-                    "translate(" + margin.left + "," + margin.top + ")");
+                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
             // Get the data
             data = [];
             var data = aSunDataSR;
             aSunDataSR = [];
-
 
             data.forEach(function (d) {
                 d.x = d[0];
@@ -267,10 +353,19 @@
                 d.date = d[3];
             });
 
-            // Scale the range of the data
-            x.domain(d3.extent(data1, function (d) { return d.x; }));
-            //            x.domain([0, 1200])
-            // y.domain([0, d3.max(data1, function(d) { return d.y; })]);
+            dataDL = [];
+            var dataDL = aSunDataDL;
+            aSunDataDL = [];
+
+            dataDL.forEach(function (d) {
+                d.x = d[0];
+                d.y = d[1];
+                d.dL = d[2];
+                d.date = d[3];
+                d.polarDay = d[4];
+            });
+            // Scale the range of the data - SunSet
+            x.domain(d3.extent(data1, function (d) { return (d.x); }));
             y.domain([0, 24]);
 
             // Add the valueline path.
@@ -289,7 +384,7 @@
                     div.transition()
                         .duration(200)
                         .style("opacity", .9);
-                    div.html(d.sR + "<br/>" + d.date)
+                    div.html("Sun rise " + d.sR + "<br/>" + d.date)
                         .style("left", (d3.event.pageX) + "px")
                         .style("top", (d3.event.pageY - 28) + "px");
                 })
@@ -300,7 +395,6 @@
                 });
 
             // Add the scatterplot  - SS
-
             // Add the valueline path.
             svg.append("path")
                 .attr("class", "line")
@@ -316,7 +410,7 @@
                     div.transition()
                         .duration(200)
                         .style("opacity", .9);
-                    div.html(d.sS + "<br/>" + d.date)
+                    div.html("Sun set " + d.sS + "<br/>" + d.date)
                         .style("left", (d3.event.pageX) + "px")
                         .style("top", (d3.event.pageY - 28) + "px");
                 })
@@ -325,6 +419,65 @@
                         .duration(500)
                         .style("opacity", 0);
                 });
+
+            // Add the scatterplot  - DL
+            // Add the valueline path.
+            svg.append("path")
+                .attr("class", "line")
+                .attr("d", valueline(dataDL));
+
+            svg.selectAll("dot")
+                .data(dataDL)
+                .enter().append("circle")
+                .attr("r", 4).
+                //                attr("fill", "yellow")
+                attr("fill", function (d) {
+                    if (d.y > 11.98 && d.y < 12.05) {
+                        return "red";
+                    } else {
+                        return "orange";
+                    }
+                    return "yellow";
+                })
+                .attr("cx", function (d) { return x(d.x); })
+                .attr("cy", function (d) {
+                    if (d.polarDay == 0) { return y(d.y); }
+                    else if (d.polarDay == 1) { return y(24); }
+                    else if (d.polarDay == -1) { return y(0); }
+                }
+                )
+                .on("mouseover", function (d) {
+                    if (d.polarDay == 0) {
+                        div.transition()
+                            .duration(200)
+                            .style("opacity", .9);
+                        div.html("Day length " + d.dL + "<br/>" + d.date)
+                            .style("left", (d3.event.pageX) + "px")
+                            .style("top", (d3.event.pageY - 28) + "px");;
+                    }
+                    else if (d.polarDay == 1) {
+                        div.transition()
+                            .duration(200)
+                            .style("opacity", .9);
+                        div.html("Polar day " + "<br/>" + d.date)
+                            .style("left", (d3.event.pageX) + "px")
+                            .style("top", (d3.event.pageY - 28) + "px");;
+                    }
+                    else if (d.polarDay == -1) {
+                        div.transition()
+                            .duration(200)
+                            .style("opacity", .9);
+                        div.html("Polar night " + "<br/>" + d.date)
+                            .style("left", (d3.event.pageX) + "px")
+                            .style("top", (d3.event.pageY - 28) + "px");;
+                    }
+                })
+                .on("mouseout", function (d) {
+                    div.transition()
+                        .duration(500)
+                        .style("opacity", 0);
+                });
+
             // Add the X Axis
             svg.append("g")
                 .attr("class", "x axis")
