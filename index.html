@@ -89,7 +89,7 @@
     <p class="suntimeHeading">Sunrise/set times</p>
     <p>Date:<input id="inputDate" type="date">
         Location:<select id="myselect">
-            <option value=".">.</option>
+            <option value="0">.</option>
         </select>
         Or (Latitude:<input id="inputLatitude" value=0 type="number">
         Longitude:<input id="inputLongitude" value=0 type="number">
@@ -185,9 +185,9 @@
                 selectedOption = this.select.selectedIndex;
             }
 
-            let lvLongitude = document.getElementById("inputLongitude").value;
-            let lvLatitude = document.getElementById("inputLatitude").value;
-            let lvTimeZone = document.getElementById("inputTimezone").value;
+            let lvLongitude = parseFloat(document.getElementById("inputLongitude").value);
+            let lvLatitude = parseFloat(document.getElementById("inputLatitude").value);
+            let lvTimeZone = parseFloat(document.getElementById("inputTimezone").value);
             let bySelection = true;
 
             // let oLocation1 = new Location(this.locationsJSON[selectedOption].city, oYear, oMonth, oDay, this.locationsJSON[selectedOption].latitude,
@@ -202,9 +202,9 @@
                 var locationIndex = selectedOption;
                 oLocation1 = new Location(context.locationsJSON[locationIndex].city, oYear, oMonth, oDay, context.locationsJSON[locationIndex].latitude,
                     context.locationsJSON[locationIndex].longitude, 0, 0, context.locationsJSON[locationIndex].timeZone, 0);
-                lvLongitude = this.locationsJSON[selectedOption].latitude;
-                lvLatitude = this.locationsJSON[selectedOption].longitude;
-                lvTimeZone = this.locationsJSON[selectedOption].timezone;
+                lvLongitude = this.locationsJSON[selectedOption].longitude;
+                lvLatitude = this.locationsJSON[selectedOption].latitude;
+                lvTimeZone = this.locationsJSON[selectedOption].timeZone;
             }
 
             let sunRise = oLocation1.get_sunRise();
@@ -255,8 +255,7 @@
                 oDay = oDate2.getDate();
 
                 if (!bySelection) {
-                    oLocation1 = new Location(context.locationsJSON[locationIndex].city, oYear, oMonth, oDay,
-                        iPlatitude, iPlongitude, 0, 0, iPtimeZone, 0);
+                    oLocation1 = new Location("coord", oYear, oMonth, oDay, iPlatitude, iPlongitude, 0, 0, iPtimeZone, 0);
                 }
                 else {
                     oLocation1 = new Location(context.locationsJSON[locationIndex].city, oYear, oMonth, oDay, context.locationsJSON[locationIndex].latitude,
