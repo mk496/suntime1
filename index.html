@@ -87,13 +87,13 @@
 <body>
     <!-- V1.0 -->
     <p class="suntimeHeading">Sunrise/set times</p>
-    <p><input id="inputDate" type="date">
-        <select id="myselect">
-            <option value="volvo">Volvo</option>
+    <p>Date:<input id="inputDate" type="date" >
+        Location:<select id="myselect">
+            <option value=".">.</option>
         </select>
-        <input id="inputLatitude" type="number">
-        <input id="inputLongitude" type="number">
-        <input id="inputTimezone" type="number">
+        Or (Latitude:<input id="inputLatitude" value=0 type="number" >
+        Longitude:<input id="inputLongitude" value=0 type="number">
+        TimeZone:<input id="inputTimezone" value=0 type="number">)
         <button onclick="getSunData(this)">OK</button>
         <span> Days ahead: </span><span id="sliderValue"></span>
         <span class="slider-wrapper">
@@ -238,14 +238,14 @@
                 oMonth = oMonth + 1;
                 oDay = oDate2.getDate();
 
-                if (iPlatitude != null) {
-                    oLocation1 = new Location(context.locationsJSON[locationIndex].city, oYear, oMonth, oDay, iPlongitude,
-                        iPlatitude, 0, 0, iPtimeZone, 0);
+                if ( (Math.abs(iPlongitude) + Math.abs(iPlatitude) + Math.abs(iPtimeZone)) != 0 ) {
+                    oLocation1 = new Location(context.locationsJSON[locationIndex].city, oYear, oMonth, oDay, 
+                        iPlatitude,iPlongitude, 0, 0, iPtimeZone, 0);
 
                 }
                 else {
                     oLocation1 = new Location(context.locationsJSON[locationIndex].city, oYear, oMonth, oDay, context.locationsJSON[locationIndex].latitude,
-                        context.locationsJSON[locationIndex].latitude, 0, 0, context.locationsJSON[locationIndex].timeZone, 0);
+                        context.locationsJSON[locationIndex].longitude, 0, 0, context.locationsJSON[locationIndex].timeZone, 0);
                 }
                 sunRiseRaw = oLocation1.get_sunRise_raw();
                 sunSetRaw = oLocation1.get_sunSet_raw();
