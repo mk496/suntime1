@@ -200,8 +200,8 @@
             }
             else {
                 var locationIndex = selectedOption;
-                oLocation1 = new Location(context.locationsJSON[locationIndex].city, oYear, oMonth, oDay, context.locationsJSON[locationIndex].latitude,
-                    context.locationsJSON[locationIndex].longitude, 0, 0, context.locationsJSON[locationIndex].timeZone, 0);
+                oLocation1 = new Location(this.locationsJSON[locationIndex].city, oYear, oMonth, oDay, this.locationsJSON[locationIndex].latitude,
+                    this.locationsJSON[locationIndex].longitude, 0, 0, this.locationsJSON[locationIndex].timeZone, 0);
                 lvLongitude = this.locationsJSON[selectedOption].longitude;
                 lvLatitude = this.locationsJSON[selectedOption].latitude;
                 lvTimeZone = this.locationsJSON[selectedOption].timeZone;
