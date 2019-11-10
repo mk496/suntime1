@@ -1,3 +1,3 @@
 git add *
-git commit 
+git commit -m "1 appr coordinates"
 git push

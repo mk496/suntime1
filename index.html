@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 
 <html>
- <!-- GPL by M.Karaskiewicz 2019  -->
+<!-- GPL by M.Karaskiewicz 2019  -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script src="https://d3js.org/d3.v3.min.js"></script>
 <script src="https://d3js.org/d3-scale.v2.min.js"></script>
@@ -87,10 +87,13 @@
 <body>
     <!-- V1.0 -->
     <p class="suntimeHeading">Sunrise/set times</p>
-    <p><input id="inputDate" type="date" required>
+    <p><input id="inputDate" type="date">
         <select id="myselect">
             <option value="volvo">Volvo</option>
         </select>
+        <input id="inputLatitude" type="number">
+        <input id="inputLongitude" type="number">
+        <input id="inputTimezone" type="number">
         <button onclick="getSunData(this)">OK</button>
         <span> Days ahead: </span><span id="sliderValue"></span>
         <span class="slider-wrapper">
@@ -119,7 +122,7 @@
 
         // define the x scale (horizontal)
 
-        
+
         window.onload = setDateforDisplay();
         var mindate = new Date(document.getElementById("inputDate").value),
             maxdate = 0;
@@ -208,10 +211,16 @@
             if (this.select != null) {
                 selectedOption = this.select.selectedIndex;
             }
-            getDataSet(oDate0, daysSpan, this, selectedOption);
+            // getDataSet(oDate0, daysSpan, this, selectedOption);
+       
+        let lvLongitude  =  document.getElementById("inputLongitude").value;
+        let lvLatitude  =  document.getElementById("inputLatitude").value ;
+        let lvTimeZone  =  document.getElementById("inputTimezone").value ;
+
+              getDataSet(oDate0, daysSpan, this, selectedOption, lvLongitude, lvLatitude, lvTimeZone);
         };
 
-        function getDataSet(oDate1, daysSpan, context, locationIndex) {
+        function getDataSet(oDate1, daysSpan, context, locationIndex,  iPlongitude, iPlatitude, iPtimeZone ) {
             var i;
             var sunData = { x: 0, y: 0, sEvent: 0, date: "", polarDay: 0 };
             let oYear = oDate1.getFullYear();
@@ -229,9 +238,15 @@
                 oMonth = oMonth + 1;
                 oDay = oDate2.getDate();
 
-                oLocation1 = new Location(context.locationsJSON[locationIndex].city, oYear, oMonth, oDay, context.locationsJSON[locationIndex].latitude,
-                    context.locationsJSON[locationIndex].longitude, 0, 0, context.locationsJSON[locationIndex].timeZone, 0);
+                if (iPlatitude != null) {
+                    oLocation1 = new Location(context.locationsJSON[locationIndex].city, oYear, oMonth, oDay, iPlongitude,
+                        iPlatitude, 0, 0, iPtimeZone, 0);
 
+                }
+                else {
+                    oLocation1 = new Location(context.locationsJSON[locationIndex].city, oYear, oMonth, oDay, context.locationsJSON[locationIndex].latitude,
+                        context.locationsJSON[locationIndex].latitude, 0, 0, context.locationsJSON[locationIndex].timeZone, 0);
+                }
                 sunRiseRaw = oLocation1.get_sunRise_raw();
                 sunSetRaw = oLocation1.get_sunSet_raw();
                 sunRise = oLocation1.get_sunRise();
@@ -274,7 +289,7 @@
             var mindateNew = new Date(document.getElementById("inputDate").value);
 
             var xScale = d3.time.scale()
-                .domain([mindateNew, maxdate])    
+                .domain([mindateNew, maxdate])
                 .range([padding, width - padding * 2]);   // map these the the chart width = total width minus padding at both sides
 
             //  Define the axes
