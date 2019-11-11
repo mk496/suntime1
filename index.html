@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 
 <html>
-<!-- GPL by M.Karaskiewicz 2019 - V1.1 with coordinates - beta not stable -->
+<!-- GPL by M.Karaskiewicz 2019 - V1.2 with coordinates clear size - beta not stable -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script src="https://d3js.org/d3.v3.min.js"></script>
 <script src="https://d3js.org/d3-scale.v2.min.js"></script>
@@ -85,15 +85,15 @@
 </style>
 
 <body>
-    <!-- V1.0 -->
-    <p class="suntimeHeading">Sunrise/set times</p>
+
+    <p class="suntimeHeading">Sunrise/set times V1.2</p>
     <p>Date:<input id="inputDate" type="date">
         (Location:<select id="myselect">
             <option value="0">.</option>
         </select>
-        ) Or (Latitude:<input id="inputLatitude" value=0 type="number">
-        Longitude:<input id="inputLongitude" value=0 type="number">
-        TimeZone:<input id="inputTimezone" value=0 type="number">)
+        ) Or (Latitude:<input id="inputLatitude" value=0 type="number" min="-90.0000" max="90.0000">
+        Longitude:<input id="inputLongitude" value=0 type="number" min="-180.0000" max="180.0000">
+        TimeZone:<input id="inputTimezone" value=0 type="number" min="-12.00" max="12.00">)
         <button onclick="getSunData(this)">OK</button>
         <button onclick="clearCoord()">Clear</button>
         <span> Days ahead: </span><span id="sliderValue"></span>
@@ -197,7 +197,7 @@
             let lvTimeZone = parseFloat(document.getElementById("inputTimezone").value);
             let bySelection = true;
 
-           
+
             let oLocation1 = null;
             if ((Math.abs(lvLongitude) + Math.abs(lvLatitude) + Math.abs(lvTimeZone)) != 0) {
                 oLocation1 = new Location("Coord", oYear, oMonth, oDay,
