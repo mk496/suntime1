@@ -82,6 +82,9 @@
     body {
         background-color: lightblue;
     }
+
+
+
 </style>
 
 <body>
@@ -91,8 +94,8 @@
         (Location:<select id="myselect">
             <option value="0">.</option>
         </select>
-        ) Or (Latitude:<input id="inputLatitude" value=0 type="number" min="-90.0000" max="90.0000">
-        Longitude:<input id="inputLongitude" value=0 type="number" min="-180.0000" max="180.0000">
+        ) Or (Latitude (+/- : N/S):<input id="inputLatitude"  value=0 type="number" min="-90.0000" max="90.0000" >
+        Longitude (+/- : E/W):<input id="inputLongitude" value=0 type="number" min="-180.0000" max="180.0000" >
         TimeZone:<input id="inputTimezone" value=0 type="number" min="-12.00" max="12.00">)
         <button onclick="getSunData(this)">OK</button>
         <button onclick="clearCoord()">Clear</button>
