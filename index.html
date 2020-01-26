@@ -277,7 +277,7 @@ function produceArrayWithDelta(Array) {  // 5 positions  - create at 6 position 
 
 function createDelta(value, index, array) {
     if( index > 0) {
-    array[index][6] = array[index-1][1] - array[index][1];
+    array[index][6] = array[index][1] - array[index-1][1];
    
     };
 };
@@ -288,7 +288,7 @@ function orderArrayWithDelta(Array) {  // 5 positions  - create at 6 position de
 
 function serRightPlaceDelta(value, index, array) {
     if( index > 0) {
-    array[index][1] = Math.abs( 100 * array[index][6] );
+    array[index][1] = Math.abs( 300 * array[index][6] );
    
     };
 };
