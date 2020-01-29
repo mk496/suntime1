@@ -277,8 +277,7 @@ function produceArrayWithDelta(Array) {  // 5 positions  - create at 6 position 
 
 function createDelta(value, index, array) {
     if( index > 0) {
-    array[index][6] = array[index][1] - array[index-1][1];
-   
+    array[index][6] = array[index][1] - array[index-1][1];   
     };
 };
 };
@@ -664,21 +663,21 @@ debugger;
                 .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
             // Get the data
-            data = [];
-            var data = aSunDataSR;
+            dataSR = [];
+            var dataSR = aSunDataSR;
             aSunDataSR = [];
 
-            data.forEach(function (d) {
+            dataSR.forEach(function (d) {
                 d.x = d[0];
                 d.y = d[1];
                 d.sR = d[2];
                 d.date = d[3];
             });
-            data1 = [];
-            var data1 = aSunDataSS;
+            dataSS = [];
+            var dataSS = aSunDataSS;
             aSunDataSS = [];
 
-            data1.forEach(function (d) {
+            dataSS.forEach(function (d) {
                 d.x = d[0];
                 d.y = d[1];
                 d.sS = d[2];
@@ -697,17 +696,17 @@ debugger;
                 d.polarDay = d[4];
             });
             // Scale the range of the data - SunSet
-            x.domain(d3.extent(data1, function (d) { return (d.x); }));
+            x.domain(d3.extent(dataSS, function (d) { return (d.x); }));
             y.domain([0, 24]);
 
             // Add the valueline path.
             svg.append("path")
                 .attr("class", "line")
-                .attr("d", valueline(data));
+                .attr("d", valueline(dataSR));
 
             // Add the scatterplot
             svg.selectAll("dot")
-                .data(data)
+                .data(dataSR)
                 .enter().append("circle")
                 .attr("r", 4).attr("fill", "blue")
                 .attr("cx", function (d) { return x(d.x); })
@@ -730,10 +729,11 @@ debugger;
             // Add the valueline path.
             svg.append("path")
                 .attr("class", "line")
-                .attr("d", valueline(data1));
+                .attr("d", valueline(dataSS));
 
+// 
             svg.selectAll("dot")
-                .data(data1)
+                .data(dataSS)
                 .enter().append("circle")
                 .attr("r", 4).attr("fill", "red")
                 .attr("cx", function (d) { return x(d.x); })
@@ -767,7 +767,9 @@ debugger;
                     if (d.y > 11.98 && d.y < 12.05) {
                         return "red";
                     } else {
+                        if( d.y > 0) {
                         return "orange";
+                        }
                     }
                     return "yellow";
                 })
