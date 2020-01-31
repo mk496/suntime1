@@ -133,7 +133,7 @@
 
 
     <script>
-        var Multip = 100;
+        var Multip = 50;
         var deltaMode = 0;
         var slider = document.getElementById("dSpan");
         var output = document.getElementById("sliderValue");
@@ -256,6 +256,7 @@
                 bySelection = false;
             }
             else {
+              
                 var locationIndex = selectedOption;
                 oLocation1 = new Location(this.locationsJSON[locationIndex].city, oYear, oMonth, oDay, this.locationsJSON[locationIndex].latitude,
                     this.locationsJSON[locationIndex].longitude, 0, 0, this.locationsJSON[locationIndex].timeZone, 0);
@@ -267,6 +268,7 @@
             let sunRise = oLocation1.get_sunRise();
             let sunSet = oLocation1.get_sunSet();
             let dayLen = oLocation1.getDayLen();
+            let dayLenRaw =  oLocation1.getDayLenRaw();
             let dayLenDecimal = dayLen[0] + "." + dayLen[1];
             let polarDay = oLocation1.getPolarDay();
 
@@ -305,10 +307,10 @@
 
             function createDelta(value, index, array) {
                 if (index > 0) {
-                    var lDelta = Math.abs(array[index][1]) - Math.abs(array[index - 1][1]);
-                    array[index][6] = lDelta;
+                    var lDelta = Math.abs(array[index][5]) - Math.abs(array[index - 1][5]);
+                    array[index][1] = lDelta;
                     if (Multip * lDelta > 8) {
-                        //       debugger;
+                               debugger;
                     }
                 };
             };
@@ -319,7 +321,8 @@
 
             function serRightPlaceDelta(value, index, array) {
                 if (index > 0) {
-                    array[index][1] = Math.abs(Multip * array[index][6]);
+                    array[index][1] = Math.abs(Multip * array[index][1]);
+
 
                 };
             };
@@ -356,6 +359,7 @@
                 sunRise = oLocation1.get_sunRise();
                 sunSet = oLocation1.get_sunSet();
                 dayLen = oLocation1.getDayLen();
+                dayLenRaw =  oLocation1.getDayLenRaw();
                 polarDay = oLocation1.getPolarDay();
 
 
@@ -608,6 +612,9 @@
                     oLocation1 = new Location("coord", oYear, oMonth, oDay, iPlatitude, iPlongitude, 0, 0, iPtimeZone, 0);
                 }
                 else {
+                    if ( i == 28) {
+                               debugger;
+                    }
                     oLocation1 = new Location(context.locationsJSON[locationIndex].city, oYear, oMonth, oDay, context.locationsJSON[locationIndex].latitude,
                         context.locationsJSON[locationIndex].longitude, 0, 0, context.locationsJSON[locationIndex].timeZone, 0);
                 }
@@ -616,6 +623,7 @@
                 sunRise = oLocation1.get_sunRise();
                 sunSet = oLocation1.get_sunSet();
                 dayLen = oLocation1.getDayLen();
+                dayLenRaw = oLocation1.getDayLenRaw();
                 dayLenDecimal = dayLen[0] + "." + dayLen[1];
                 polarDay = oLocation1.getPolarDay();
 
@@ -635,7 +643,7 @@
                 sunData.y = dayLen[0] + dayLen[1] / 60;
                 sunData.sEvent = dayLen[0].toString() + ":" + dayLen[1].toString();
                 sunData.polarDay = polarDay;
-                aSunDataDL1.push([sunData.x, sunData.y, sunData.sEvent, sunData.date, sunData.polarDay, dayLenDecimal, 0]);
+                aSunDataDL1.push([sunData.x, sunData.y, sunData.sEvent, sunData.date, sunData.polarDay, dayLenRaw]);
                 // last
                 maxdate = oDate2;
             }

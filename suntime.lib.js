@@ -1,4 +1,5 @@
-// Library suntime location V1.0 copyright GNU licence by M.Karaskiewicz 2019
+// Library suntime location V1.1 copyright GNU licence by M.Karaskiewicz 2019
+// V1.1 - getDayLenRaw()
 class Location {
     constructor($ip_city, $IVY, $IVM, $IVD, $IVLAT, $IVLONG, $IVCENT, $IVDST, $IVTZ, $iv_shift) {
         this.md_city;
@@ -210,6 +211,15 @@ class Location {
         return this._convert2Minutes(this.mdayLen);
 
     };
+
+    getDayLenRaw() {
+
+        this.mdayLen = this.get_sunSet_raw() - this.get_sunRise_raw()
+
+        return  this.mdayLen;
+
+    };
+
 
     set_shift_for_date($iv_R, $iv_M, $iv_D, $iv_shift) {
         let $arr_date = new Date($iv_R, $iv_M, $iv_D + $iv_shift, 0, 0, 0, 0);
