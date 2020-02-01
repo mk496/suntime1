@@ -306,36 +306,7 @@
             }
 
         };
-        function produceArrayWithDelta(Array) {  // 5 positions  - create at 6 position delta of day length
-            Array.forEach(createDelta);
-
-            function createDelta(value, index, array) {
-                var lDelta ;
-                if (index > 0) {
-                    lDelta = Math.abs(array[index][5]) - Math.abs(array[index - 1][5]);
-                    array[index][1] = lDelta;
-                    if (Multip * lDelta > 8) {
-                               debugger;
-                    }
-                }
-                else {
-                    lDelta = 0;
-                    array[index][1] = lDelta;
-                };
-            };
-        };
-
-        function orderArrayWithDelta(Array) {  // 5 positions  - create at 6 position delta of day length
-            Array.forEach(serRightPlaceDelta);
-
-            function serRightPlaceDelta(value, index, array) {
-                if (index > 0) {
-                    array[index][1] = Math.abs(1 * array[index][1]);
-
-
-                };
-            };
-        };
+      
 
 
         function drawDataSet(oDate1, daysSpan, context, locationIndex, iPlongitude, iPlatitude, iPtimeZone, bySelection) {
@@ -597,6 +568,44 @@
                 .call(yAxis);
         };
 
+        function produceArrayWithDelta(Array) {  // 5 positions  - create at 6 position delta of day length
+            Array.forEach(createDelta);
+
+            function createDelta(value, index, array) {
+                var lDelta ;
+                if (index > 0) {
+                    lDelta = Math.abs(array[index][5]) - Math.abs(array[index - 1][5]);
+
+                    if ( lDelta > 0) {
+                        array[index][6] = 1; 
+                    }else{
+                        array[index][6] = -1;  
+                    }
+
+                    array[index][1] = lDelta;
+                    if (Multip * lDelta > 8) {
+                               debugger;
+                    }
+                }
+                else {
+                    lDelta = 0;
+                    array[index][1] = lDelta;
+                };
+            };
+        };
+
+        function orderArrayWithDelta(Array) {  // 5 positions  - create at 6 position delta of day length
+            Array.forEach(serRightPlaceDelta);
+
+            function serRightPlaceDelta(value, index, array) {
+                if (index > 0) {
+                    array[index][1] = Math.abs(1 * array[index][1]);
+
+
+                };
+            };
+        };
+
         function drawDataSetwDelta(oDate1, daysSpan, context, locationIndex, iPlongitude, iPlatitude, iPtimeZone, bySelection) {
             var i;
             var sunData = { x: 0, y: 0, sEvent: 0, date: "", polarDay: 0 };
@@ -652,13 +661,14 @@
                 sunData.y = dayLen[0] + dayLen[1] / 60;
                 sunData.sEvent = dayLen[0].toString() + ":" + dayLen[1].toString();
                 sunData.polarDay = polarDay;
-                aSunDataDLDelta.push([sunData.x, sunData.y, sunData.sEvent, sunData.date, sunData.polarDay, dayLenRaw]);
+
+                aSunDataDLDelta.push([sunData.x, sunData.y, sunData.sEvent, sunData.date, sunData.polarDay, dayLenRaw,0 ]);
                 // last
                 maxdate = oDate2;
             }
             debugger;
             produceArrayWithDelta(aSunDataDLDelta);
-            orderArrayWithDelta(aSunDataDLDelta);
+ //           orderArrayWithDelta(aSunDataDLDelta);
  //           aSunDataDL = aSunDataDLDelta;
            
             // D3
@@ -738,6 +748,7 @@
                 d.dL = d[2];
                 d.date = d[3];
                 d.polarDay = d[4];
+                d.deltaSign = d[6];
             });
             // Scale the range of the data - SunSet
             x.domain(d3.extent(dataSS, function (d) { return (d.x); }));
@@ -809,14 +820,16 @@
                 //                attr("fill", "yellow")
                 attr("fill", function (d) {
                     d.y = Multip * d.y;
-                    if (d.y > 11.98 && d.y < 12.05) {
+                    if (d.y < 0) {
+                        d.y = -1 * d.y ;
                         return "red";
+                       
                     } else {
-                        if (d.y > 0) {
+                      
                             return "orange";
                         }
-                    }
-                    return "yellow";
+                  
+                   return "yellow";
                 })
                 .attr("cx", function (d) { return x(d.x); })
                 .attr("cy", function (d) {
@@ -830,7 +843,7 @@
                         div.transition()
                             .duration(200)
                             .style("opacity", .9);
-                        div.html("Delta minutes " + (( d.y / Multip ) * 60).toFixed(2) + "<br/>" + d.date)
+                        div.html("Delta minutes " + d.deltaSign * (( d.y / Multip ) * 60).toFixed(2) + "<br/>" + d.date)
                             .style("left", (d3.event.pageX) + "px")
                             .style("top", (d3.event.pageY - 28) + "px");;
                     }
