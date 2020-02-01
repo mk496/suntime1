@@ -133,7 +133,7 @@
 
 
     <script>
-        var Multip = 50;
+        var Multip = 100;
         var deltaMode = 0;
         var slider = document.getElementById("dSpan");
         var output = document.getElementById("sliderValue");
@@ -330,7 +330,7 @@
 
             function serRightPlaceDelta(value, index, array) {
                 if (index > 0) {
-                    array[index][1] = Math.abs(Multip * array[index][1]);
+                    array[index][1] = Math.abs(1 * array[index][1]);
 
 
                 };
@@ -808,6 +808,7 @@
                 .attr("r", 4).
                 //                attr("fill", "yellow")
                 attr("fill", function (d) {
+                    d.y = Multip * d.y;
                     if (d.y > 11.98 && d.y < 12.05) {
                         return "red";
                     } else {
@@ -829,7 +830,7 @@
                         div.transition()
                             .duration(200)
                             .style("opacity", .9);
-                        div.html("Delta " + d.y + "<br/>" + d.date)
+                        div.html("Delta minutes " + ( d.y / Multip ) * 60 + "<br/>" + d.date)
                             .style("left", (d3.event.pageX) + "px")
                             .style("top", (d3.event.pageY - 28) + "px");;
                     }
