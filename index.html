@@ -109,7 +109,7 @@
         TimeZone:<input id="inputTimezone" value=0 type="number" min="-12.00" max="12.00">)
         <button onclick="drawSunData(this)">OK</button>
         <button onclick="clearCoord()">Clear</button>
-        <button onclick="setDeltaMode()">DL/Delta</button>
+        <input id="inputDeltaMode" type="checkbox" >DayLen/Delta</br>
     </p>
     <p class="sunttimeZooms">
 
@@ -145,7 +145,7 @@
         var aSunDataSR = [];
         var aSunDataSS = [];
         var aSunDataDL = [];  // DayLength
-        var aSunDataDL1 = [];  //with delta
+        var aSunDataDLDelta = [];  //with delta
 
         // define the x scale (horizontal)
 
@@ -294,6 +294,10 @@
 
 
             //            drawDataSet(oDate0, daysSpan, this, selectedOption, lvLongitude, lvLatitude, lvTimeZone, bySelection);
+            if( document.getElementById("inputDeltaMode").checked == true ) {
+                deltaMode = 1;
+            }else{ deltaMode = 0;}
+            
             if (deltaMode == 0) {
                 drawDataSet(oDate0, daysSpan, this, selectedOption, lvLongitude, lvLatitude, lvTimeZone, bySelection);
             }
@@ -306,12 +310,17 @@
             Array.forEach(createDelta);
 
             function createDelta(value, index, array) {
+                var lDelta ;
                 if (index > 0) {
-                    var lDelta = Math.abs(array[index][5]) - Math.abs(array[index - 1][5]);
+                    lDelta = Math.abs(array[index][5]) - Math.abs(array[index - 1][5]);
                     array[index][1] = lDelta;
                     if (Multip * lDelta > 8) {
                                debugger;
                     }
+                }
+                else {
+                    lDelta = 0;
+                    array[index][1] = lDelta;
                 };
             };
         };
@@ -643,14 +652,15 @@
                 sunData.y = dayLen[0] + dayLen[1] / 60;
                 sunData.sEvent = dayLen[0].toString() + ":" + dayLen[1].toString();
                 sunData.polarDay = polarDay;
-                aSunDataDL1.push([sunData.x, sunData.y, sunData.sEvent, sunData.date, sunData.polarDay, dayLenRaw]);
+                aSunDataDLDelta.push([sunData.x, sunData.y, sunData.sEvent, sunData.date, sunData.polarDay, dayLenRaw]);
                 // last
                 maxdate = oDate2;
             }
             debugger;
-            produceArrayWithDelta(aSunDataDL1);
-            orderArrayWithDelta(aSunDataDL1);
-            aSunDataDL = aSunDataDL1;
+            produceArrayWithDelta(aSunDataDLDelta);
+            orderArrayWithDelta(aSunDataDLDelta);
+ //           aSunDataDL = aSunDataDLDelta;
+           
             // D3
             d3.select("svg").remove();
 
@@ -718,10 +728,11 @@
             });
 
             dataDL = [];
-            var dataDL = aSunDataDL;
-            aSunDataDL = [];
+            var dataDLDelta = aSunDataDLDelta;
+            aSunDataDLDelta = [];
+ //           aSunDataDL = [];
 
-            dataDL.forEach(function (d) {
+            dataDLDelta.forEach(function (d) {
                 d.x = d[0];
                 d.y = d[1];
                 d.dL = d[2];
@@ -789,10 +800,10 @@
             // Add the valueline path.
             svg.append("path")
                 .attr("class", "line")
-                .attr("d", valueline(dataDL));
+                .attr("d", valueline(dataDLDelta));
 
             svg.selectAll("dot")
-                .data(dataDL)
+                .data(dataDLDelta)
                 .enter().append("circle")
                 .attr("r", 4).
                 //                attr("fill", "yellow")
