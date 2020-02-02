@@ -133,7 +133,9 @@
 
 
     <script>
-        var Multip = 100;
+        var foundMax = 0;
+        var maxSign = 1.0000000000001;
+        var multip = 100;
         var deltaMode = 0;
         var slider = document.getElementById("dSpan");
         var output = document.getElementById("sliderValue");
@@ -583,7 +585,7 @@
                     }
 
                     array[index][1] = lDelta;
-                    if (Multip * lDelta > 8) {
+                    if (multip * lDelta > 8) {
                                debugger;
                     }
                 }
@@ -605,6 +607,25 @@
                 };
             };
         };
+
+        function setMaxInArrayWithDelta(Array) {  // 5 positions  - create at 6 position delta of day length
+            Array.forEach(createDelta);
+
+            function createDelta(value, index, array) {
+                var lDelta ;
+                if ( (index > 0 ) && (foundMax == 0) ){
+                    if ( ( Math.abs(array[index][1]) >= Math.abs(array[index - 1][1]) ) &&
+                    ( Math.abs(array[index][1]) > Math.abs(array[index + 2][1]) ) )
+                      {
+                        array[index][6] = maxSign; 
+                        foundMax = 1;                
+                    }
+                }
+
+                    
+                };
+            };
+        
 
         function drawDataSetwDelta(oDate1, daysSpan, context, locationIndex, iPlongitude, iPlatitude, iPtimeZone, bySelection) {
             var i;
@@ -630,9 +651,9 @@
                     oLocation1 = new Location("coord", oYear, oMonth, oDay, iPlatitude, iPlongitude, 0, 0, iPtimeZone, 0);
                 }
                 else {
-                    if ( i == 28) {
-                               debugger;
-                    }
+                    // if ( i == 28) {
+                    //            debugger;
+                    // }
                     oLocation1 = new Location(context.locationsJSON[locationIndex].city, oYear, oMonth, oDay, context.locationsJSON[locationIndex].latitude,
                         context.locationsJSON[locationIndex].longitude, 0, 0, context.locationsJSON[locationIndex].timeZone, 0);
                 }
@@ -670,6 +691,7 @@
             produceArrayWithDelta(aSunDataDLDelta);
  //           orderArrayWithDelta(aSunDataDLDelta);
  //           aSunDataDL = aSunDataDLDelta;
+            setMaxInArrayWithDelta(aSunDataDLDelta);
            
             // D3
             d3.select("svg").remove();
@@ -819,12 +841,16 @@
                 .attr("r", 4).
                 //                attr("fill", "yellow")
                 attr("fill", function (d) {
-                    d.y = Multip * d.y;
+                    d.y = multip * d.y;
                     if (d.y < 0) {
                         d.y = -1 * d.y ;
                         return "red";
                        
-                    } else {
+                    } else if (d.deltaSign == maxSign) {
+                        return "blue";
+                    } 
+                    else {
+                
                       
                             return "orange";
                         }
@@ -843,7 +869,7 @@
                         div.transition()
                             .duration(200)
                             .style("opacity", .9);
-                        div.html("Delta minutes " + d.deltaSign * (( d.y / Multip ) * 60).toFixed(2) + "<br/>" + d.date)
+                        div.html("Delta minutes " + Math.round(d.deltaSign) * (( d.y / multip ) * 60).toFixed(2) + "<br/>" + d.date)
                             .style("left", (d3.event.pageX) + "px")
                             .style("top", (d3.event.pageY - 28) + "px");;
                     }
