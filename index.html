@@ -109,7 +109,7 @@
         TimeZone:<input id="inputTimezone" value=0 type="number" min="-12.00" max="12.00">)
         <button onclick="drawSunData(this)">OK</button>
         <button onclick="clearCoord()">Clear</button>
-        <button onclick="setDeltaMode()">DL/Delta</button>
+        <input id="inputDeltaMode" type="checkbox" >DayLen/Delta</br>
     </p>
     <p class="sunttimeZooms">
 
@@ -133,7 +133,9 @@
 
 
     <script>
-        var Multip = 100;
+        var foundMax = 0;
+        var maxSign = 1.0000000000001;
+        var multip = 100;
         var deltaMode = 0;
         var slider = document.getElementById("dSpan");
         var output = document.getElementById("sliderValue");
@@ -145,7 +147,7 @@
         var aSunDataSR = [];
         var aSunDataSS = [];
         var aSunDataDL = [];  // DayLength
-        var aSunDataDL1 = [];  //with delta
+        var aSunDataDLDelta = [];  //with delta
 
         // define the x scale (horizontal)
 
@@ -256,6 +258,7 @@
                 bySelection = false;
             }
             else {
+              
                 var locationIndex = selectedOption;
                 oLocation1 = new Location(this.locationsJSON[locationIndex].city, oYear, oMonth, oDay, this.locationsJSON[locationIndex].latitude,
                     this.locationsJSON[locationIndex].longitude, 0, 0, this.locationsJSON[locationIndex].timeZone, 0);
@@ -267,6 +270,7 @@
             let sunRise = oLocation1.get_sunRise();
             let sunSet = oLocation1.get_sunSet();
             let dayLen = oLocation1.getDayLen();
+            let dayLenRaw =  oLocation1.getDayLenRaw();
             let dayLenDecimal = dayLen[0] + "." + dayLen[1];
             let polarDay = oLocation1.getPolarDay();
 
@@ -292,6 +296,10 @@
 
 
             //            drawDataSet(oDate0, daysSpan, this, selectedOption, lvLongitude, lvLatitude, lvTimeZone, bySelection);
+            if( document.getElementById("inputDeltaMode").checked == true ) {
+                deltaMode = 1;
+            }else{ deltaMode = 0;}
+            
             if (deltaMode == 0) {
                 drawDataSet(oDate0, daysSpan, this, selectedOption, lvLongitude, lvLatitude, lvTimeZone, bySelection);
             }
@@ -300,30 +308,7 @@
             }
 
         };
-        function produceArrayWithDelta(Array) {  // 5 positions  - create at 6 position delta of day length
-            Array.forEach(createDelta);
-
-            function createDelta(value, index, array) {
-                if (index > 0) {
-                    var lDelta = Math.abs(array[index][1]) - Math.abs(array[index - 1][1]);
-                    array[index][6] = lDelta;
-                    if (Multip * lDelta > 8) {
-                        //       debugger;
-                    }
-                };
-            };
-        };
-
-        function orderArrayWithDelta(Array) {  // 5 positions  - create at 6 position delta of day length
-            Array.forEach(serRightPlaceDelta);
-
-            function serRightPlaceDelta(value, index, array) {
-                if (index > 0) {
-                    array[index][1] = Math.abs(Multip * array[index][6]);
-
-                };
-            };
-        };
+      
 
 
         function drawDataSet(oDate1, daysSpan, context, locationIndex, iPlongitude, iPlatitude, iPtimeZone, bySelection) {
@@ -356,6 +341,7 @@
                 sunRise = oLocation1.get_sunRise();
                 sunSet = oLocation1.get_sunSet();
                 dayLen = oLocation1.getDayLen();
+                dayLenRaw =  oLocation1.getDayLenRaw();
                 polarDay = oLocation1.getPolarDay();
 
 
@@ -584,6 +570,63 @@
                 .call(yAxis);
         };
 
+        function produceArrayWithDelta(Array) {  // 5 positions  - create at 6 position delta of day length
+            Array.forEach(createDelta);
+
+            function createDelta(value, index, array) {
+                var lDelta ;
+                if (index > 0) {
+                    lDelta = Math.abs(array[index][5]) - Math.abs(array[index - 1][5]);
+
+                    if ( lDelta > 0) {
+                        array[index][6] = 1; 
+                    }else{
+                        array[index][6] = -1;  
+                    }
+
+                    array[index][1] = lDelta;
+                    if (multip * lDelta > 8) {
+                               debugger;
+                    }
+                }
+                else {
+                    lDelta = 0;
+                    array[index][1] = lDelta;
+                };
+            };
+        };
+
+        function orderArrayWithDelta(Array) {  // 5 positions  - create at 6 position delta of day length
+            Array.forEach(serRightPlaceDelta);
+
+            function serRightPlaceDelta(value, index, array) {
+                if (index > 0) {
+                    array[index][1] = Math.abs(1 * array[index][1]);
+
+
+                };
+            };
+        };
+
+        function setMaxInArrayWithDelta(Array) {  // 5 positions  - create at 6 position delta of day length
+            Array.forEach(createDelta);
+
+            function createDelta(value, index, array) {
+                var lDelta ;
+                if ( (index > 0 ) && (foundMax == 0) ){
+                    if ( ( Math.abs(array[index][1]) >= Math.abs(array[index - 1][1]) ) &&
+                    ( Math.abs(array[index][1]) > Math.abs(array[index + 2][1]) ) )
+                      {
+                        array[index][6] = maxSign; 
+                        foundMax = 1;                
+                    }
+                }
+
+                    
+                };
+            };
+        
+
         function drawDataSetwDelta(oDate1, daysSpan, context, locationIndex, iPlongitude, iPlatitude, iPtimeZone, bySelection) {
             var i;
             var sunData = { x: 0, y: 0, sEvent: 0, date: "", polarDay: 0 };
@@ -608,6 +651,9 @@
                     oLocation1 = new Location("coord", oYear, oMonth, oDay, iPlatitude, iPlongitude, 0, 0, iPtimeZone, 0);
                 }
                 else {
+                    // if ( i == 28) {
+                    //            debugger;
+                    // }
                     oLocation1 = new Location(context.locationsJSON[locationIndex].city, oYear, oMonth, oDay, context.locationsJSON[locationIndex].latitude,
                         context.locationsJSON[locationIndex].longitude, 0, 0, context.locationsJSON[locationIndex].timeZone, 0);
                 }
@@ -616,6 +662,7 @@
                 sunRise = oLocation1.get_sunRise();
                 sunSet = oLocation1.get_sunSet();
                 dayLen = oLocation1.getDayLen();
+                dayLenRaw = oLocation1.getDayLenRaw();
                 dayLenDecimal = dayLen[0] + "." + dayLen[1];
                 polarDay = oLocation1.getPolarDay();
 
@@ -635,14 +682,17 @@
                 sunData.y = dayLen[0] + dayLen[1] / 60;
                 sunData.sEvent = dayLen[0].toString() + ":" + dayLen[1].toString();
                 sunData.polarDay = polarDay;
-                aSunDataDL1.push([sunData.x, sunData.y, sunData.sEvent, sunData.date, sunData.polarDay, dayLenDecimal, 0]);
+
+                aSunDataDLDelta.push([sunData.x, sunData.y, sunData.sEvent, sunData.date, sunData.polarDay, dayLenRaw,0 ]);
                 // last
                 maxdate = oDate2;
             }
             debugger;
-            produceArrayWithDelta(aSunDataDL1);
-            orderArrayWithDelta(aSunDataDL1);
-            aSunDataDL = aSunDataDL1;
+            produceArrayWithDelta(aSunDataDLDelta);
+ //           orderArrayWithDelta(aSunDataDLDelta);
+ //           aSunDataDL = aSunDataDLDelta;
+            setMaxInArrayWithDelta(aSunDataDLDelta);
+           
             // D3
             d3.select("svg").remove();
 
@@ -710,15 +760,17 @@
             });
 
             dataDL = [];
-            var dataDL = aSunDataDL;
-            aSunDataDL = [];
+            var dataDLDelta = aSunDataDLDelta;
+            aSunDataDLDelta = [];
+ //           aSunDataDL = [];
 
-            dataDL.forEach(function (d) {
+            dataDLDelta.forEach(function (d) {
                 d.x = d[0];
                 d.y = d[1];
                 d.dL = d[2];
                 d.date = d[3];
                 d.polarDay = d[4];
+                d.deltaSign = d[6];
             });
             // Scale the range of the data - SunSet
             x.domain(d3.extent(dataSS, function (d) { return (d.x); }));
@@ -781,22 +833,29 @@
             // Add the valueline path.
             svg.append("path")
                 .attr("class", "line")
-                .attr("d", valueline(dataDL));
+                .attr("d", valueline(dataDLDelta));
 
             svg.selectAll("dot")
-                .data(dataDL)
+                .data(dataDLDelta)
                 .enter().append("circle")
                 .attr("r", 4).
                 //                attr("fill", "yellow")
                 attr("fill", function (d) {
-                    if (d.y > 11.98 && d.y < 12.05) {
+                    d.y = multip * d.y;
+                    if (d.y < 0) {
+                        d.y = -1 * d.y ;
                         return "red";
-                    } else {
-                        if (d.y > 0) {
+                       
+                    } else if (d.deltaSign == maxSign) {
+                        return "blue";
+                    } 
+                    else {
+                
+                      
                             return "orange";
                         }
-                    }
-                    return "yellow";
+                  
+                   return "yellow";
                 })
                 .attr("cx", function (d) { return x(d.x); })
                 .attr("cy", function (d) {
@@ -810,7 +869,7 @@
                         div.transition()
                             .duration(200)
                             .style("opacity", .9);
-                        div.html("Delta " + d.y + "<br/>" + d.date)
+                        div.html("Delta minutes " + Math.round(d.deltaSign) * (( d.y / multip ) * 60).toFixed(2) + "<br/>" + d.date)
                             .style("left", (d3.event.pageX) + "px")
                             .style("top", (d3.event.pageY - 28) + "px");;
                     }
