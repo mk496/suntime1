@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 
 <html>
-<!-- GPL by M.Karaskiewicz 2019 - V1.2 with coordinates clear size - beta not stable -->
+<!-- GPL by M.Karaskiewicz 2019 - V1.3 with coordinates clear size - delta, pad -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script src="https://d3js.org/d3.v3.min.js"></script>
 <script src="https://d3js.org/d3-scale.v2.min.js"></script>
@@ -99,7 +99,7 @@
 
 <body>
 
-    <p class="suntimeHeading">Sunrise/set times V1.2</p>
+    <p class="suntimeHeading">Sunrise/set times V1.3</p>
     <p>Date:<input id="inputDate" type="date">
         (Location:<select id="myselect">
             <option value="0">.</option>
@@ -625,7 +625,22 @@
                     
                 };
             };
+
+            Number.prototype.pad = function(size) {
+    var s = String(this);
+    while (s.length < (size || 2)) {s = "0" + s;}
+    return s;
+};
+
+            function conv2StringWithSeconds(ivValue) {
+      //      Math.round(d.deltaSign) * (( d.y / multip ) * 60).toFixed(2)
+            let minutes = Math.floor(ivValue);
+        let seconds = Math.floor((ivValue - minutes) * 60);
+        return  minutes + ":" + (seconds).pad(2);
+            };
         
+        
+
 
         function drawDataSetwDelta(oDate1, daysSpan, context, locationIndex, iPlongitude, iPlatitude, iPtimeZone, bySelection) {
             var i;
@@ -869,7 +884,7 @@
                         div.transition()
                             .duration(200)
                             .style("opacity", .9);
-                        div.html("Delta minutes " + Math.round(d.deltaSign) * (( d.y / multip ) * 60).toFixed(2) + "<br/>" + d.date)
+                        div.html("Delta minutes " + conv2StringWithSeconds(Math.round(d.deltaSign) * (( d.y / multip ) * 60).toFixed(2)) + "<br/>" + d.date)
                             .style("left", (d3.event.pageX) + "px")
                             .style("top", (d3.event.pageY - 28) + "px");;
                     }
