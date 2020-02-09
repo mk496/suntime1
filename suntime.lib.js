@@ -179,14 +179,14 @@ class Location {
         let $lv = this.md_sunrise4;
         this.md_sunrise4 = this.get_time_over_24h($lv);
 
-        return this._convert2Minutes(this.md_sunrise4);
+        return this._convert2MinutesStr(this.md_sunrise4);
 
     };
 
     get_sunSet() {
         let $lv = this.md_sunset4;
         this.md_sunset4 = this.get_time_over_24h($lv);
-        return this._convert2Minutes(this.md_sunset4);
+        return this._convert2MinutesStr(this.md_sunset4);
     };
 
     get_sunRise_raw() {
@@ -248,7 +248,12 @@ class Location {
     _convert2Minutes(ivValue) {
         let hour = Math.floor(ivValue);
         let minutes = Math.floor((ivValue - hour) * 60);
-        return [hour, (minutes).pad(2)];
+        return [hour,(minutes).pad(2)];
+    };
+    _convert2MinutesStr(ivValue) {
+        let hour = Math.floor(ivValue);
+        let minutes = Math.floor((ivValue - hour) * 60);
+        return hour + ":" +  (minutes).pad(2);
     };
 
 // Polar zone ***************************************
