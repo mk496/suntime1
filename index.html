@@ -276,8 +276,11 @@
 
             document.getElementById("coord").innerHTML = "Coordinates:" + lvLatitude + ", " + lvLongitude + ",";
             document.getElementById("timeZone").innerHTML = "Timezone:" + lvTimeZone + ", ";
-            document.getElementById("sunrise").innerHTML = PrefixSR + sunRise[0] + ":" + sunRise[1];
-            document.getElementById("sunset").innerHTML = PrefixSS + sunSet[0] + ":" + sunSet[1];
+            // document.getElementById("sunrise").innerHTML = PrefixSR + sunRise[0] + ":" + sunRise[1];
+            // document.getElementById("sunset").innerHTML = PrefixSS + sunSet[0] + ":" + sunSet[1];
+            // document.getElementById("dayLen").innerHTML = PrefixDD + dayLen[0] + ":" + dayLen[1];
+            document.getElementById("sunrise").innerHTML = PrefixSR + sunRise;
+            document.getElementById("sunset").innerHTML = PrefixSS + sunSet;
             document.getElementById("dayLen").innerHTML = PrefixDD + dayLen[0] + ":" + dayLen[1];
 
             if (polarDay == 1) {
