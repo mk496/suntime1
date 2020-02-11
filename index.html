@@ -588,7 +588,7 @@
                     }
 
                     array[index][1] = lDelta;
-                    if (multip * lDelta > 8) {
+                    if (multip * lDelta < -7.5) {
                                debugger;
                     }
                 }
@@ -635,8 +635,9 @@
     return s;
 };
 
-            function conv2StringWithSeconds(ivValue) {
+            function conv2StringWithSeconds(ivValue0) {
       //      Math.round(d.deltaSign) * (( d.y / multip ) * 60).toFixed(2)
+            let ivValue = Math.abs(ivValue0)
             let minutes = Math.floor(ivValue);
         let seconds = Math.floor((ivValue - minutes) * 60);
         return  minutes + ":" + (seconds).pad(2);
