@@ -637,10 +637,12 @@
 
             function conv2StringWithSeconds(ivValue0) {
       //      Math.round(d.deltaSign) * (( d.y / multip ) * 60).toFixed(2)
-            let ivValue = Math.abs(ivValue0)
+            let lSign = "+";
+           if( ivValue0 < 0 ){  lSign = "-" };
+            let ivValue = Math.abs(ivValue0);
             let minutes = Math.floor(ivValue);
         let seconds = Math.floor((ivValue - minutes) * 60);
-        return  minutes + ":" + (seconds).pad(2);
+        return  lSign + minutes + ":" + (seconds).pad(2);
             };
         
         
