@@ -133,6 +133,29 @@
 
 
     <script>
+
+
+var inactivityTime = function () {
+    var time;
+    window.onload = resetTimer;
+    // DOM Events
+    document.onmousemove = resetTimer;
+    document.onkeypress = resetTimer;
+
+    function logout() {
+        alert("You are now logged out.")
+        //location.href = 'logout.html'
+    }
+
+    function resetTimer() {
+        clearTimeout(time);
+        time = setTimeout(logout, 13000)
+        // 1000 milliseconds = 1 second
+    }
+};
+
+
+
         var foundMax = 0;
         var maxSign = 1.0000000000001;
         var multip = 100;
@@ -164,6 +187,8 @@
             drawSunData(this);
         })();
 
+
+        
         this.select = document.getElementById("myselect");
         var options = this.locationsJSON
 
@@ -193,7 +218,7 @@
         }
 
         function setDateforDisplay() {
-
+            inactivityTime(); 
             const today = new Date()
             const tomorrow = new Date(today)
             tomorrow.setDate(tomorrow.getDate() + 1)
