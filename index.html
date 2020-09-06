@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 
 <html>
-<!-- GPL by M.Karaskiewicz 2019 - V1.2 with coordinates clear size - beta not stable -->
+<!-- GPL by M.Karaskiewicz 2019 - V1.3 with coordinates clear size - delta, pad -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script src="https://d3js.org/d3.v3.min.js"></script>
 <script src="https://d3js.org/d3-scale.v2.min.js"></script>
@@ -99,7 +99,7 @@
 
 <body>
 
-    <p class="suntimeHeading">Sunrise/set times V1.2</p>
+    <p class="suntimeHeading">Sunrise/set times V1.3</p>
     <p>Date:<input id="inputDate" type="date">
         (Location:<select id="myselect">
             <option value="0">.</option>
@@ -115,7 +115,7 @@
 
         <span> Days ahead: </span><span id="sliderValue"></span>
         <span class="slider-wrapper">
-            <input id="dSpan" type="range" min="1" max="1370" step="1" value=200 onchange="drawSunData(this)">
+            <input id="dSpan" type="range" min="1" max="1370" step="1" value=150 onchange="drawSunData(this)">
         </span>
         <span> Vertical zoom: </span><span id="sliderValueX"></span>
         <span class="sliderX-wrapper">
@@ -133,6 +133,29 @@
 
 
     <script>
+
+
+var inactivityTime = function () {
+    var time;
+    window.onload = resetTimer;
+    // DOM Events
+    document.onmousemove = resetTimer;
+    document.onkeypress = resetTimer;
+
+    function logout() {
+        alert("You are now logged out. Leroy gmail mi.. long Maka*!")
+        //location.href = 'logout.html'
+    }
+
+    function resetTimer() {
+        clearTimeout(time);
+        time = setTimeout(logout, 13000)
+        // 1000 milliseconds = 1 second
+    }
+};
+
+
+
         var foundMax = 0;
         var maxSign = 1.0000000000001;
         var multip = 100;
@@ -164,6 +187,8 @@
             drawSunData(this);
         })();
 
+
+        
         this.select = document.getElementById("myselect");
         var options = this.locationsJSON
 
@@ -193,7 +218,7 @@
         }
 
         function setDateforDisplay() {
-
+            inactivityTime(); 
             const today = new Date()
             const tomorrow = new Date(today)
             tomorrow.setDate(tomorrow.getDate() + 1)
@@ -203,7 +228,7 @@
 
             mikDate = tomorrow;
             if (
-                mikDate.getMonth() < 8
+                mikDate.getMonth() < 9
             ) {
                 mikMM = mikDate.getMonth() + 1;
                 mikMM = "0" + mikMM;
@@ -217,7 +242,7 @@
                 mikDD = "0" + mikDate.getDate();
             } else {
                 //               mikDD = mikDate.getDate() + 1;
-                mikDD = mikDate.getDate() + 1;
+                mikDD = mikDate.getDate(); // + 1;
             }
 
 
@@ -276,8 +301,11 @@
 
             document.getElementById("coord").innerHTML = "Coordinates:" + lvLatitude + ", " + lvLongitude + ",";
             document.getElementById("timeZone").innerHTML = "Timezone:" + lvTimeZone + ", ";
-            document.getElementById("sunrise").innerHTML = PrefixSR + sunRise[0] + ":" + sunRise[1];
-            document.getElementById("sunset").innerHTML = PrefixSS + sunSet[0] + ":" + sunSet[1];
+            // document.getElementById("sunrise").innerHTML = PrefixSR + sunRise[0] + ":" + sunRise[1];
+            // document.getElementById("sunset").innerHTML = PrefixSS + sunSet[0] + ":" + sunSet[1];
+            // document.getElementById("dayLen").innerHTML = PrefixDD + dayLen[0] + ":" + dayLen[1];
+            document.getElementById("sunrise").innerHTML = PrefixSR + sunRise;
+            document.getElementById("sunset").innerHTML = PrefixSS + sunSet;
             document.getElementById("dayLen").innerHTML = PrefixDD + dayLen[0] + ":" + dayLen[1];
 
             if (polarDay == 1) {
@@ -304,7 +332,7 @@
                 drawDataSet(oDate0, daysSpan, this, selectedOption, lvLongitude, lvLatitude, lvTimeZone, bySelection);
             }
             else {
-                drawDataSetwDelta(oDate0, daysSpan, this, selectedOption, lvLongitude, lvLatitude, lvTimeZone, bySelection);
+                drawDataSetWDelta(oDate0, daysSpan, this, selectedOption, lvLongitude, lvLatitude, lvTimeZone, bySelection);
             }
 
         };
@@ -585,7 +613,7 @@
                     }
 
                     array[index][1] = lDelta;
-                    if (multip * lDelta > 8) {
+                    if (multip * lDelta < -7.5) {
                                debugger;
                     }
                 }
@@ -625,9 +653,27 @@
                     
                 };
             };
+
+            Number.prototype.pad = function(size) {
+    var s = String(this);
+    while (s.length < (size || 2)) {s = "0" + s;}
+    return s;
+};
+
+            function conv2StringWithSeconds(ivValue0) {
+      //      Math.round(d.deltaSign) * (( d.y / multip ) * 60).toFixed(2)
+            let lSign = "+";
+           if( ivValue0 < 0 ){  lSign = "-" };
+            let ivValue = Math.abs(ivValue0);
+            let minutes = Math.floor(ivValue);
+        let seconds = Math.floor((ivValue - minutes) * 60);
+        return  lSign + minutes + ":" + (seconds).pad(2);
+            };
+        
         
 
-        function drawDataSetwDelta(oDate1, daysSpan, context, locationIndex, iPlongitude, iPlatitude, iPtimeZone, bySelection) {
+
+        function drawDataSetWDelta(oDate1, daysSpan, context, locationIndex, iPlongitude, iPlatitude, iPtimeZone, bySelection) {
             var i;
             var sunData = { x: 0, y: 0, sEvent: 0, date: "", polarDay: 0 };
             let oYear = oDate1.getFullYear();
@@ -869,7 +915,7 @@
                         div.transition()
                             .duration(200)
                             .style("opacity", .9);
-                        div.html("Delta minutes " + Math.round(d.deltaSign) * (( d.y / multip ) * 60).toFixed(2) + "<br/>" + d.date)
+                        div.html("Delta minutes " + conv2StringWithSeconds(Math.round(d.deltaSign) * (( d.y / multip ) * 60).toFixed(2)) + "<br/>" + d.date)
                             .style("left", (d3.event.pageX) + "px")
                             .style("top", (d3.event.pageY - 28) + "px");;
                     }

@@ -1,5 +1,10 @@
 // Library suntime location V1.1 copyright GNU licence by M.Karaskiewicz 2019
 // V1.1 - getDayLenRaw()
+Number.prototype.pad = function(size) {
+    var s = String(this);
+    while (s.length < (size || 2)) {s = "0" + s;}
+    return s;
+};
 class Location {
     constructor($ip_city, $IVY, $IVM, $IVD, $IVLAT, $IVLONG, $IVCENT, $IVDST, $IVTZ, $iv_shift) {
         this.md_city;
@@ -174,14 +179,14 @@ class Location {
         let $lv = this.md_sunrise4;
         this.md_sunrise4 = this.get_time_over_24h($lv);
 
-        return this._convert2Minutes(this.md_sunrise4);
+        return this._convert2MinutesStr(this.md_sunrise4);
 
     };
 
     get_sunSet() {
         let $lv = this.md_sunset4;
         this.md_sunset4 = this.get_time_over_24h($lv);
-        return this._convert2Minutes(this.md_sunset4);
+        return this._convert2MinutesStr(this.md_sunset4);
     };
 
     get_sunRise_raw() {
@@ -236,13 +241,20 @@ class Location {
         let $lvr = $lv - $lvi;
         let $m = $lvr * $val2;
         return $m;
-    }
+    };
+
+   
 
     _convert2Minutes(ivValue) {
         let hour = Math.floor(ivValue);
         let minutes = Math.floor((ivValue - hour) * 60);
-        return [hour, minutes];
-    }
+        return [hour,(minutes).pad(2)];
+    };
+    _convert2MinutesStr(ivValue) {
+        let hour = Math.floor(ivValue);
+        let minutes = Math.floor((ivValue - hour) * 60);
+        return hour + ":" +  (minutes).pad(2);
+    };
 
 // Polar zone ***************************************
 
