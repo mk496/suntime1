@@ -332,7 +332,7 @@ var inactivityTime = function () {
                 drawDataSet(oDate0, daysSpan, this, selectedOption, lvLongitude, lvLatitude, lvTimeZone, bySelection);
             }
             else {
-                drawDataSetwDelta(oDate0, daysSpan, this, selectedOption, lvLongitude, lvLatitude, lvTimeZone, bySelection);
+                drawDataSetWDelta(oDate0, daysSpan, this, selectedOption, lvLongitude, lvLatitude, lvTimeZone, bySelection);
             }
 
         };
@@ -673,7 +673,7 @@ var inactivityTime = function () {
         
 
 
-        function drawDataSetwDelta(oDate1, daysSpan, context, locationIndex, iPlongitude, iPlatitude, iPtimeZone, bySelection) {
+        function drawDataSetWDelta(oDate1, daysSpan, context, locationIndex, iPlongitude, iPlatitude, iPtimeZone, bySelection) {
             var i;
             var sunData = { x: 0, y: 0, sEvent: 0, date: "", polarDay: 0 };
             let oYear = oDate1.getFullYear();
