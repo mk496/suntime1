@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 
 <html>
-<!-- GPL by M.Karaskiewicz 2019 - V1.3 with coordinates clear size - delta, pad -->
+<!-- GPL by M.Karaskiewicz 2019 - V1.3 with coordinates clear size - delta, pad, leroy passw added -->
+<!-- 08.2020 - V1.3.10 leroy passw added -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script src="https://d3js.org/d3.v3.min.js"></script>
 <script src="https://d3js.org/d3-scale.v2.min.js"></script>
@@ -109,7 +110,7 @@
         TimeZone:<input id="inputTimezone" value=0 type="number" min="-12.00" max="12.00">)
         <button onclick="drawSunData(this)">OK</button>
         <button onclick="clearCoord()">Clear</button>
-        <input id="inputDeltaMode" type="checkbox" >DayLen/Delta</br>
+        <input id="inputDeltaMode" type="checkbox">DayLen/Delta</br>
     </p>
     <p class="sunttimeZooms">
 
@@ -135,24 +136,24 @@
     <script>
 
 
-var inactivityTime = function () {
-    var time;
-    window.onload = resetTimer;
-    // DOM Events
-    document.onmousemove = resetTimer;
-    document.onkeypress = resetTimer;
+        var inactivityTime = function () {
+            var time;
+            window.onload = resetTimer;
+            // DOM Events
+            document.onmousemove = resetTimer;
+            document.onkeypress = resetTimer;
 
-    function logout() {
-        alert("You are now logged out. Leroy gmail mi.. long Maka*!")
-        //location.href = 'logout.html'
-    }
+            function logout() {
+                alert("You are now logged out. Leroy gmail mi.. long Maka*!")
+                //location.href = 'logout.html'
+            }
 
-    function resetTimer() {
-        clearTimeout(time);
-        time = setTimeout(logout, 13000)
-        // 1000 milliseconds = 1 second
-    }
-};
+            function resetTimer() {
+                clearTimeout(time);
+                time = setTimeout(logout, 13000)
+                // 1000 milliseconds = 1 second
+            }
+        };
 
 
 
@@ -188,7 +189,7 @@ var inactivityTime = function () {
         })();
 
 
-        
+
         this.select = document.getElementById("myselect");
         var options = this.locationsJSON
 
@@ -218,7 +219,7 @@ var inactivityTime = function () {
         }
 
         function setDateforDisplay() {
-            inactivityTime(); 
+            inactivityTime();
             const today = new Date()
             const tomorrow = new Date(today)
             tomorrow.setDate(tomorrow.getDate() + 1)
@@ -254,7 +255,88 @@ var inactivityTime = function () {
         };
         function setBodyCol() {
             document.body.style.backgroundColor = document.getElementById("colorP").value;
-        }
+        };
+
+        function switchDateFactory(year, month) {
+            var SDate = new Date(year, month, 31);
+            var err;
+            var aDays = [20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31]
+                ;
+            return {
+
+                getMarchSunnday: function () {
+                    try {
+                        aDays.reverse().forEach(function (item, index) {
+                            var SDateLoc = new Date(year, 2, item);
+                            if (SDateLoc.getDay() == "0") {
+                                //   debugger;
+                                throw SDateLoc;
+                            }
+                        }
+                        )
+                    }
+                    catch (err) {
+                        return err;
+                    }
+                },
+                getOktoberSunnday: function () {
+                    try {
+                        aDays.reverse().forEach(function (item, index) {
+                            var SDateLoc = new Date(year, 9, item);
+                            if (SDateLoc.getDay() == "0") {
+                                //   debugger;
+                                throw SDateLoc;
+                            }
+                        }
+                        )
+                    }
+                    catch (err) {
+                        return err;
+                    }
+                }
+
+
+            }
+        };
+
+        function getTimeZoneShift(year, month, day) {
+            var oMarchSwitchDate = new switchDateFactory(year, 2);
+            var sDay3 = oMarchSwitchDate.getMarchSunnday().getDate();
+            var sMonth3 = oMarchSwitchDate.getMarchSunnday().getMonth();
+            //debugger;
+            //        var oOktoberSwitchDate = new switchDateFactory(year, 9);
+            var sDay10 = oMarchSwitchDate.getOktoberSunnday().getDate();
+            var sMonth10 = oMarchSwitchDate.getOktoberSunnday().getMonth();
+
+            if (month >= sMonth3 & month <= sMonth10)
+                switch (month) {
+                    case sMonth3:
+                        if (day >= sDay3) {
+                            return 1;
+                        }
+                        break;
+                    case 3:
+                    case 4:
+                    case 5:
+                    case 6:
+                    case 7:
+                    case 8:
+                        // code block
+                        return 1;
+                        break;
+                    case sMonth10:
+                        if (day <= sDay10) {
+                            return 1;
+                        }
+                        break;
+                    default:
+                        return 0;
+                }
+            return 0;
+
+
+        };
+
         function drawSunData(context) {
 
             let oDate0 = new Date(document.getElementById("inputDate").value);
@@ -272,30 +354,32 @@ var inactivityTime = function () {
 
             let lvLongitude = parseFloat(document.getElementById("inputLongitude").value);
             let lvLatitude = parseFloat(document.getElementById("inputLatitude").value);
-            let lvTimeZone = parseFloat(document.getElementById("inputTimezone").value);
+            let lvTimeZone = parseFloat(document.getElementById("inputTimezone").value); // + getTimeZoneShift(oYear, oMonth - 1, oDay);
             let bySelection = true;
 
 
             let oLocation1 = null;
             if ((Math.abs(lvLongitude) + Math.abs(lvLatitude) + Math.abs(lvTimeZone)) != 0) {
+                //       lvTimeZone = lvTimeZone +  getTimeZoneShift(oYear, oMonth - 1, oDay);
                 oLocation1 = new Location("Coord", oYear, oMonth, oDay,
                     lvLatitude, lvLongitude, 0, 0, lvTimeZone, 0);
                 bySelection = false;
             }
             else {
-              
+
                 var locationIndex = selectedOption;
                 oLocation1 = new Location(this.locationsJSON[locationIndex].city, oYear, oMonth, oDay, this.locationsJSON[locationIndex].latitude,
                     this.locationsJSON[locationIndex].longitude, 0, 0, this.locationsJSON[locationIndex].timeZone, 0);
                 lvLongitude = this.locationsJSON[selectedOption].longitude;
                 lvLatitude = this.locationsJSON[selectedOption].latitude;
-                lvTimeZone = this.locationsJSON[selectedOption].timeZone;
+                // debugger;
+                lvTimeZone = this.locationsJSON[selectedOption].timeZone; // + getTimeZoneShift(oYear, oMonth - 1, oDay);
             }
 
             let sunRise = oLocation1.get_sunRise();
             let sunSet = oLocation1.get_sunSet();
             let dayLen = oLocation1.getDayLen();
-            let dayLenRaw =  oLocation1.getDayLenRaw();
+            let dayLenRaw = oLocation1.getDayLenRaw();
             let dayLenDecimal = dayLen[0] + "." + dayLen[1];
             let polarDay = oLocation1.getPolarDay();
 
@@ -324,11 +408,12 @@ var inactivityTime = function () {
 
 
             //            drawDataSet(oDate0, daysSpan, this, selectedOption, lvLongitude, lvLatitude, lvTimeZone, bySelection);
-            if( document.getElementById("inputDeltaMode").checked == true ) {
+            if (document.getElementById("inputDeltaMode").checked == true) {
                 deltaMode = 1;
-            }else{ deltaMode = 0;}
-            
+            } else { deltaMode = 0; }
+
             if (deltaMode == 0) {
+                debugger;
                 drawDataSet(oDate0, daysSpan, this, selectedOption, lvLongitude, lvLatitude, lvTimeZone, bySelection);
             }
             else {
@@ -336,7 +421,7 @@ var inactivityTime = function () {
             }
 
         };
-      
+
 
 
         function drawDataSet(oDate1, daysSpan, context, locationIndex, iPlongitude, iPlatitude, iPtimeZone, bySelection) {
@@ -358,18 +443,22 @@ var inactivityTime = function () {
                 oDay = oDate2.getDate();
 
                 if (!bySelection) {
+                    debugger;
+                    iPtimeZone = iPtimeZone + getTimeZoneShift(oYear, oMonth - 1, oDay);
                     oLocation1 = new Location("coord", oYear, oMonth, oDay, iPlatitude, iPlongitude, 0, 0, iPtimeZone, 0);
                 }
                 else {
+                    debugger;
+                    var iTimeZone = context.locationsJSON[locationIndex].timeZone + getTimeZoneShift(oYear, oMonth - 1, oDay);
                     oLocation1 = new Location(context.locationsJSON[locationIndex].city, oYear, oMonth, oDay, context.locationsJSON[locationIndex].latitude,
-                        context.locationsJSON[locationIndex].longitude, 0, 0, context.locationsJSON[locationIndex].timeZone, 0);
+                        context.locationsJSON[locationIndex].longitude, 0, 0, iTimeZone, 0);
                 }
                 sunRiseRaw = oLocation1.get_sunRise_raw();
                 sunSetRaw = oLocation1.get_sunSet_raw();
                 sunRise = oLocation1.get_sunRise();
                 sunSet = oLocation1.get_sunSet();
                 dayLen = oLocation1.getDayLen();
-                dayLenRaw =  oLocation1.getDayLenRaw();
+                dayLenRaw = oLocation1.getDayLenRaw();
                 polarDay = oLocation1.getPolarDay();
 
 
@@ -602,19 +691,19 @@ var inactivityTime = function () {
             Array.forEach(createDelta);
 
             function createDelta(value, index, array) {
-                var lDelta ;
+                var lDelta;
                 if (index > 0) {
                     lDelta = Math.abs(array[index][5]) - Math.abs(array[index - 1][5]);
 
-                    if ( lDelta > 0) {
-                        array[index][6] = 1; 
-                    }else{
-                        array[index][6] = -1;  
+                    if (lDelta > 0) {
+                        array[index][6] = 1;
+                    } else {
+                        array[index][6] = -1;
                     }
 
                     array[index][1] = lDelta;
                     if (multip * lDelta < -7.5) {
-                               debugger;
+                        debugger;
                     }
                 }
                 else {
@@ -640,37 +729,36 @@ var inactivityTime = function () {
             Array.forEach(createDelta);
 
             function createDelta(value, index, array) {
-                var lDelta ;
-                if ( (index > 0 ) && (foundMax == 0) ){
-                    if ( ( Math.abs(array[index][1]) >= Math.abs(array[index - 1][1]) ) &&
-                    ( Math.abs(array[index][1]) > Math.abs(array[index + 2][1]) ) )
-                      {
-                        array[index][6] = maxSign; 
-                        foundMax = 1;                
+                var lDelta;
+                if ((index > 0) && (foundMax == 0)) {
+                    if ((Math.abs(array[index][1]) >= Math.abs(array[index - 1][1])) &&
+                        (Math.abs(array[index][1]) > Math.abs(array[index + 2][1]))) {
+                        array[index][6] = maxSign;
+                        foundMax = 1;
                     }
                 }
 
-                    
-                };
+
             };
+        };
 
-            Number.prototype.pad = function(size) {
-    var s = String(this);
-    while (s.length < (size || 2)) {s = "0" + s;}
-    return s;
-};
+        Number.prototype.pad = function (size) {
+            var s = String(this);
+            while (s.length < (size || 2)) { s = "0" + s; }
+            return s;
+        };
 
-            function conv2StringWithSeconds(ivValue0) {
-      //      Math.round(d.deltaSign) * (( d.y / multip ) * 60).toFixed(2)
+        function conv2StringWithSeconds(ivValue0) {
+            //      Math.round(d.deltaSign) * (( d.y / multip ) * 60).toFixed(2)
             let lSign = "+";
-           if( ivValue0 < 0 ){  lSign = "-" };
+            if (ivValue0 < 0) { lSign = "-" };
             let ivValue = Math.abs(ivValue0);
             let minutes = Math.floor(ivValue);
-        let seconds = Math.floor((ivValue - minutes) * 60);
-        return  lSign + minutes + ":" + (seconds).pad(2);
-            };
-        
-        
+            let seconds = Math.floor((ivValue - minutes) * 60);
+            return lSign + minutes + ":" + (seconds).pad(2);
+        };
+
+
 
 
         function drawDataSetWDelta(oDate1, daysSpan, context, locationIndex, iPlongitude, iPlatitude, iPtimeZone, bySelection) {
@@ -729,16 +817,16 @@ var inactivityTime = function () {
                 sunData.sEvent = dayLen[0].toString() + ":" + dayLen[1].toString();
                 sunData.polarDay = polarDay;
 
-                aSunDataDLDelta.push([sunData.x, sunData.y, sunData.sEvent, sunData.date, sunData.polarDay, dayLenRaw,0 ]);
+                aSunDataDLDelta.push([sunData.x, sunData.y, sunData.sEvent, sunData.date, sunData.polarDay, dayLenRaw, 0]);
                 // last
                 maxdate = oDate2;
             }
             debugger;
             produceArrayWithDelta(aSunDataDLDelta);
- //           orderArrayWithDelta(aSunDataDLDelta);
- //           aSunDataDL = aSunDataDLDelta;
+            //           orderArrayWithDelta(aSunDataDLDelta);
+            //           aSunDataDL = aSunDataDLDelta;
             setMaxInArrayWithDelta(aSunDataDLDelta);
-           
+
             // D3
             d3.select("svg").remove();
 
@@ -808,7 +896,7 @@ var inactivityTime = function () {
             dataDL = [];
             var dataDLDelta = aSunDataDLDelta;
             aSunDataDLDelta = [];
- //           aSunDataDL = [];
+            //           aSunDataDL = [];
 
             dataDLDelta.forEach(function (d) {
                 d.x = d[0];
@@ -889,19 +977,19 @@ var inactivityTime = function () {
                 attr("fill", function (d) {
                     d.y = multip * d.y;
                     if (d.y < 0) {
-                        d.y = -1 * d.y ;
+                        d.y = -1 * d.y;
                         return "red";
-                       
+
                     } else if (d.deltaSign == maxSign) {
                         return "blue";
-                    } 
+                    }
                     else {
-                
-                      
-                            return "orange";
-                        }
-                  
-                   return "yellow";
+
+
+                        return "orange";
+                    }
+
+                    return "yellow";
                 })
                 .attr("cx", function (d) { return x(d.x); })
                 .attr("cy", function (d) {
@@ -915,7 +1003,7 @@ var inactivityTime = function () {
                         div.transition()
                             .duration(200)
                             .style("opacity", .9);
-                        div.html("Delta minutes " + conv2StringWithSeconds(Math.round(d.deltaSign) * (( d.y / multip ) * 60).toFixed(2)) + "<br/>" + d.date)
+                        div.html("Delta minutes " + conv2StringWithSeconds(Math.round(d.deltaSign) * ((d.y / multip) * 60).toFixed(2)) + "<br/>" + d.date)
                             .style("left", (d3.event.pageX) + "px")
                             .style("top", (d3.event.pageY - 28) + "px");;
                     }
