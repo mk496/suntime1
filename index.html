@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 
 <html>
-<!-- GPL by M.Karaskiewicz 2019 - V1.3 with coordinates clear size - delta, pad, leroy passw added -->
-<!-- 08.2020 - V1.3.10 leroy passw added -->
+<!-- GPL by M.Karaskiewicz 2019 - V1.4 with coordinates clear size - delta, pad, leroy passw added -->
+<!-- 06.20201 - V1.4.00 locations in JS outside -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script src="https://d3js.org/d3.v3.min.js"></script>
 <script src="https://d3js.org/d3-scale.v2.min.js"></script>
 <script src="suntime.lib.js"></script>
 
-<script type="text/javascript" src="locations.json"></script>
+<script  src="locations.js"></script> -->
 
 <meta charset="utf-8">
 <style>
@@ -100,7 +100,7 @@
 
 <body>
 
-    <p class="suntimeHeading">Sunrise/set times V1.3</p>
+    <p class="suntimeHeading">Sunrise/set times V1.4</p>
     <p>Date:<input id="inputDate" type="date">
         (Location:<select id="myselect">
             <option value="0">.</option>
@@ -134,8 +134,21 @@
 
 
     <script>
+// var locations = [{"city":"Poznan", "latitude":52.408333, "longitude":16.934167, "timeZone": 1},
+// {"city":"Grybow", "latitude":49.624444, "longitude":20.948333,"timeZone": 1}, 
+// {"city":"Moskwa", "latitude":55.75, "longitude":37.616667,"timeZone": 3},
+// {"city":"Anchorage", "latitude":61.21, "longitude":-149.88,"timeZone": -9},
+// {"city":"Longyearbyen", "latitude":78.21, "longitude":15.33,"timeZone": 1},
+// {"city":"McMurdo", "latitude":-77.84, "longitude":166.66,"timeZone": 12},
+// {"city":"North Pole", "latitude":90, "longitude":166.66,"timeZone": 12},
+// {"city":"South Pole", "latitude":-90, "longitude":166.66,"timeZone": 12}];
+// debugger;
+//let locations = require('locations.json');
 
-
+// $.getJSON("locations.json", function(json) {
+//     debugger;
+//     console.log(json); // this will show the info it in firebug console
+// });
         var inactivityTime = function () {
             var time;
             window.onload = resetTimer;
