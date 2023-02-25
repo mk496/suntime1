@@ -1,4 +1,4 @@
-var locations = [{"city":"Poznan", "latitude":52.408333, "longitude":16.934167, "timeZone": 1},
+var locations = [{"city":"Poznan - freedom city", "latitude":52.408333, "longitude":16.934167, "timeZone": 1},
 {"city":"Grybow", "latitude":49.624444, "longitude":20.948333,"timeZone": 1}, 
 {"city":"Moskwa - Facist Capital", "latitude":55.75, "longitude":37.616667,"timeZone": 3},
 {"city":"New York", "latitude":40.43, "longitude":-74.01,"timeZone": -5}, 
