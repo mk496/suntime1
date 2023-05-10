@@ -2,6 +2,7 @@
 
 <html>
 <!-- GPL by M.Karaskiewicz 2019 - V1.4 with coordinates clear size - delta, pad, leroy passw added -->
+<!-- GPL by M.Karaskiewicz 2023 - V1.5 no drowing on manual coorinates -->
 <!-- 06.20201 - V1.4.00 locations in JS outside -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script src="https://d3js.org/d3.v3.min.js"></script>
@@ -100,7 +101,7 @@
 
 <body>
 
-    <p class="suntimeHeading">Sunrise/set times V1.4</p>
+    <p class="suntimeHeading">Sunrise/set times V1.5</p>
     <p>Date:<input id="inputDate" type="date">
         (Location:<select id="myselect">
             <option value="0">.</option>
@@ -428,14 +429,22 @@
             if (document.getElementById("inputDeltaMode").checked == true) {
                 deltaMode = 1;
             } else { deltaMode = 0; }
-
+            if ( bySelection == true ) {
             if (deltaMode == 0) {
-                debugger;
+                //debugger;
+               
                 drawDataSet(oDate0, daysSpan, this, selectedOption, lvLongitude, lvLatitude, lvTimeZone, bySelection);
+                
             }
             else {
                 drawDataSetWDelta(oDate0, daysSpan, this, selectedOption, lvLongitude, lvLatitude, lvTimeZone, bySelection);
             }
+        }
+            else {
+             
+             d3.select("svg").remove(); // V1.5
+            }
+            
 
         };
 
@@ -460,12 +469,12 @@
                 oDay = oDate2.getDate();
 
                 if (!bySelection) {
-                    debugger;
+                    //debugger;
                     iPtimeZone = iPtimeZone + getTimeZoneShift(oYear, oMonth - 1, oDay);
                     oLocation1 = new Location("coord", oYear, oMonth, oDay, iPlatitude, iPlongitude, 0, 0, iPtimeZone, 0);
                 }
                 else {
-                    debugger;
+                    //debugger;
                     var iTimeZone = context.locationsJSON[locationIndex].timeZone + getTimeZoneShift(oYear, oMonth - 1, oDay);
                     oLocation1 = new Location(context.locationsJSON[locationIndex].city, oYear, oMonth, oDay, context.locationsJSON[locationIndex].latitude,
                         context.locationsJSON[locationIndex].longitude, 0, 0, iTimeZone, 0);
@@ -720,7 +729,7 @@
 
                     array[index][1] = lDelta;
                     if (multip * lDelta < -7.5) {
-                        debugger;
+                        //debugger;
                     }
                 }
                 else {
