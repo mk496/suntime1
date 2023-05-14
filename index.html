@@ -101,16 +101,17 @@
 
 <body>
 
-    <p class="suntimeHeading">Sunrise/set times V1.6</p>
-    <p>Date:<input id="inputDate" type="date">
-        (Location:<select id="myselect">
+    <!-- <p id="idSuntimeHeading" class="suntimeHeading">Sunrise/set times V1.6</p> -->
+    <p id="idSuntimeHeading" class="suntimeHeading">.</p>
+    <p>Date: <input id="inputDate" type="date" >
+        (Location selection:<select id="myselect">
             <option value="0">.</option>
         </select>
-        ) Or (Latitude:<input id="inputLatitude" value=0 type="number" min="-90.0000" max="90.0000">
+        ) or ( manually - Latitude:<input id="inputLatitude" value=0 type="number" min="-90.0000" max="90.0000">
         Longitude:<input id="inputLongitude" value=0 type="number" min="-180.0000" max="180.0000">
         TimeZone:<input id="inputTimezone" value=0 type="number" min="-12.00" max="12.00">)
-        <button onclick="drawSunData(this)">OK</button>
-        <button onclick="clearCoord()">Clear</button>
+        <button onclick="drawSunData(this)">Apply</button>
+        <button onclick="clearCoord()">Clear manual entries</button>
         <input id="inputDeltaMode" type="checkbox">DayLen/Delta</br>
     </p>
     <p class="sunttimeZooms">
@@ -134,22 +135,15 @@
     <span id="polarDay" class="suntimeDayLength"> </span>
 
 
-    <script>
-        // var locations = [{"city":"Poznan", "latitude":52.408333, "longitude":16.934167, "timeZone": 1},
-        // {"city":"Grybow", "latitude":49.624444, "longitude":20.948333,"timeZone": 1}, 
-        // {"city":"Moskwa", "latitude":55.75, "longitude":37.616667,"timeZone": 3},
-        // {"city":"Anchorage", "latitude":61.21, "longitude":-149.88,"timeZone": -9},
-        // {"city":"Longyearbyen", "latitude":78.21, "longitude":15.33,"timeZone": 1},
-        // {"city":"McMurdo", "latitude":-77.84, "longitude":166.66,"timeZone": 12},
-        // {"city":"North Pole", "latitude":90, "longitude":166.66,"timeZone": 12},
-        // {"city":"South Pole", "latitude":-90, "longitude":166.66,"timeZone": 12}];
-        // debugger;
-        //let locations = require('locations.json');
 
-        // $.getJSON("locations.json", function(json) {
-        //     debugger;
-        //     console.log(json); // this will show the info it in firebug console
-        // });
+    <script>
+        const gcHeadSuntimes = "Sunrise/set times V1.6.1";
+        const gcHeadSuntimesDelta = "Sunrise/set times V1.6.1 - delta mode";
+    </script>
+
+
+    <script>
+
         var inactivityTime = function () {
             var time;
             window.onload = resetTimer;
@@ -200,6 +194,7 @@
 
         (function init() {
             debugger;
+            document.getElementById("idSuntimeHeading").innerHTML = gcHeadSuntimes;
             drawSunData(this);
         })();
 
@@ -428,9 +423,16 @@
 
             //            drawDataSet(oDate0, daysSpan, this, selectedOption, lvLongitude, lvLatitude, lvTimeZone, bySelection);
             if (document.getElementById("inputDeltaMode").checked == true) {
+               
                 deltaMode = 1;
+                document.getElementById("idSuntimeHeading").innerHTML = gcHeadSuntimesDelta;
+                
             } else { deltaMode = 0; }
+               //document.getElementById('inputDeltaMode').setAttribute("enabled","enabled");
+              
+                document.getElementById("idSuntimeHeading").innerHTML = gcHeadSuntimes;
             if (bySelection == true) {
+                document.getElementById('inputDeltaMode').disabled = false;
                 if (deltaMode == 0) {
                     //debugger;
 
@@ -438,13 +440,20 @@
 
                 }
                 else {
+                    document.getElementById("idSuntimeHeading").innerHTML = gcHeadSuntimesDelta;
                     drawDataSetWDelta(oDate0, daysSpan, this, selectedOption, lvLongitude, lvLatitude, lvTimeZone, bySelection);
                 }
             }
-            else {
+            else {  // manual mode **********
 
                 //  d3.select("svg").remove(); // V1.6
+                deltaMode = 0;
+                document.getElementById("inputDeltaMode").checked = false;
+               // document.getElementById("inputDeltaMode").= false;
+                document.getElementById('inputDeltaMode').disabled = true;
+                
                 drawDataSetM(oDate0, daysSpan, this, selectedOption, lvLongitude, lvLatitude, lvTimeZone, bySelection);
+               
 
             }
 
@@ -724,18 +733,7 @@
             oMonth = oMonth + 1;
             let oDay = oDate1.getDate();
             let oDate2 = oDate1;
-            
 
-            // oDate2.setDate(oDate1.getDate() + 1);
-
-            // oYear = oDate2.getFullYear();
-            // oMonth = oDate2.getMonth();
-            // oMonth = oMonth + 1;
-            // oDay = oDate2.getDate();
-
-            // // if (!bySelection) {
-            // //debugger;
-            // iPtimeZone = iPtimeZone + getTimeZoneShift(oYear, oMonth - 1, oDay);
 
             for (i = 0; i < daysSpan; i++) {
 
@@ -747,9 +745,9 @@
                     oMonth = oMonth + 1;
                     oDay = oDate2.getDate();
 
-                   
+
                     iPtimeZone = iPtimeZone0 + getTimeZoneShift(oYear, oMonth - 1, oDay);
-                  
+
 
                 };
 
