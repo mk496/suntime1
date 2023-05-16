@@ -145,6 +145,7 @@
     <script>
 
         var inactivityTime = function () {
+           
             var time;
             window.onload = resetTimer;
             // DOM Events
@@ -161,6 +162,7 @@
                 time = setTimeout(logout, 13000)
                 // 1000 milliseconds = 1 second
             }
+        
         };
 
 
@@ -229,7 +231,7 @@
         }
 
         function setDateforDisplay() {
-            inactivityTime();
+           // inactivityTime();
             const today = new Date()
             const tomorrow = new Date(today)
             tomorrow.setDate(tomorrow.getDate() + 1)
