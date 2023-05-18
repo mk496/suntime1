@@ -9,7 +9,7 @@
 <script src="https://d3js.org/d3-scale.v2.min.js"></script>
 <script src="suntime.lib.js"></script>
 
-<script src="locations.js"></script> 
+<script src="locations.js"></script>
 
 <meta charset="utf-8">
 <style>
@@ -101,9 +101,8 @@
 
 <body>
 
-    <!-- <p id="idSuntimeHeading" class="suntimeHeading">Sunrise/set times V1.6</p> -->
     <p id="idSuntimeHeading" class="suntimeHeading">.</p>
-    <p>Date: <input id="inputDate" type="date" >
+    <p>Date: <input id="inputDate" type="date">
         (Location selection:<select id="myselect">
             <option value="0">.</option>
         </select>
@@ -145,7 +144,7 @@
     <script>
 
         var inactivityTime = function () {
-           
+
             var time;
             window.onload = resetTimer;
             // DOM Events
@@ -162,7 +161,7 @@
                 time = setTimeout(logout, 13000)
                 // 1000 milliseconds = 1 second
             }
-        
+
         };
 
 
@@ -231,7 +230,7 @@
         }
 
         function setDateforDisplay() {
-           // inactivityTime();
+            // inactivityTime();
             const today = new Date()
             const tomorrow = new Date(today)
             tomorrow.setDate(tomorrow.getDate() + 1)
@@ -425,14 +424,14 @@
 
             //            drawDataSet(oDate0, daysSpan, this, selectedOption, lvLongitude, lvLatitude, lvTimeZone, bySelection);
             if (document.getElementById("inputDeltaMode").checked == true) {
-               
+
                 deltaMode = 1;
                 document.getElementById("idSuntimeHeading").innerHTML = gcHeadSuntimesDelta;
-                
+
             } else { deltaMode = 0; }
-               //document.getElementById('inputDeltaMode').setAttribute("enabled","enabled");
-              
-                document.getElementById("idSuntimeHeading").innerHTML = gcHeadSuntimes;
+            //document.getElementById('inputDeltaMode').setAttribute("enabled","enabled");
+
+            document.getElementById("idSuntimeHeading").innerHTML = gcHeadSuntimes;
             if (bySelection == true) {
                 document.getElementById('inputDeltaMode').disabled = false;
                 if (deltaMode == 0) {
@@ -451,11 +450,11 @@
                 //  d3.select("svg").remove(); // V1.6
                 deltaMode = 0;
                 document.getElementById("inputDeltaMode").checked = false;
-               // document.getElementById("inputDeltaMode").= false;
+                // document.getElementById("inputDeltaMode").= false;
                 document.getElementById('inputDeltaMode').disabled = true;
-                
+
                 drawDataSetM(oDate0, daysSpan, this, selectedOption, lvLongitude, lvLatitude, lvTimeZone, bySelection);
-               
+
 
             }
 
