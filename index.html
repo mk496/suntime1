@@ -143,7 +143,7 @@
 
 
     <script>
-
+        let gcScreenWidth = screen.width;
         var inactivityTime = function () {
            
             var time;
@@ -526,7 +526,9 @@
             d3.select("svg").remove();
 
             var margin = { top: 30, right: 15, bottom: 30, left: 20 },
-                width = 1500 - margin.left - margin.right,
+            
+                //width = 2000 - margin.left - margin.right,
+                width = gcScreenWidth - margin.left - margin.right,
                 //heightX = 400;
                 heightX = document.getElementById("dSpanX").value;
             height = heightX - margin.top - margin.bottom,
@@ -788,7 +790,8 @@
             d3.select("svg").remove();
 
             var margin = { top: 30, right: 15, bottom: 30, left: 20 },
-                width = 1500 - margin.left - margin.right,
+                // width = 1500 - margin.left - margin.right,
+                width = gcScreenWidth - margin.left - margin.right,
                 //heightX = 400;
                 heightX = document.getElementById("dSpanX").value;
             height = heightX - margin.top - margin.bottom,
@@ -1133,7 +1136,8 @@
             d3.select("svg").remove();
 
             var margin = { top: 30, right: 15, bottom: 30, left: 20 },
-                width = 1500 - margin.left - margin.right,
+                //width = 1500 - margin.left - margin.right,
+                width = gcScreenWidth - margin.left - margin.right,
                 //heightX = 400;
                 heightX = document.getElementById("dSpanX").value;
             height = heightX - margin.top - margin.bottom,
