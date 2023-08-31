@@ -1,5 +1,6 @@
 var locations = [{"city":"Poznan", "latitude":52.408333, "longitude":16.934167, "timeZone": 1},
 {"city":"Grybow", "latitude":49.624444, "longitude":20.948333,"timeZone": 1}, 
+{"city":"Chania", "latitude":35.513828, "longitude":24.018038,"timeZone": 2}, 
 {"city":"Moskwa", "latitude":55.75, "longitude":37.616667,"timeZone": 3},
 {"city":"New York", "latitude":40.43, "longitude":-74.01,"timeZone": -5}, 
 {"city":"Los Angeles", "latitude":34.098907, "longitude":-118.327759,"timeZone": -8},      
