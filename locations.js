@@ -9,7 +9,8 @@ var locations = [{"city":"Poznan", "latitude":52.408333, "longitude":16.934167, 
 {"city":"Longyearbyen", "latitude":78.21, "longitude":15.33,"timeZone": 1},
 {"city":"McMurdo", "latitude":-77.84, "longitude":166.66,"timeZone": 12},
 {"city":"North Pole", "latitude":90, "longitude":166.66,"timeZone": 12},
-{"city":"South Pole", "latitude":-90, "longitude":166.66,"timeZone": 12}]
+{"city":"South Pole", "latitude":-90, "longitude":166.66,"timeZone": 12},
+{"city":"Stuttgart", "latitude":48.783333, "longitude":9.183333,"timeZone": 1}]
 
 
     
