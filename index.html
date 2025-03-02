@@ -4,13 +4,14 @@
 <!-- GPL by M.Karaskiewicz 2019 - V1.4 with coordinates clear size - delta, pad, leroy passw added -->
 <!-- GPL by M.Karaskiewicz 2023 - V1.6 no drowing on manual coorinates -->
 <!-- GPL by M.Karaskiewicz 2023 - V1.6.2 adaptive -->
+<!-- GPL by M.Karaskiewicz 2023 - V1.6.4 summer time checkbox - 01.03.2025-->
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script src="https://d3js.org/d3.v3.min.js"></script>
 <script src="https://d3js.org/d3-scale.v2.min.js"></script>
 <script src="suntime.lib.js"></script>
 
-<script src="locations.js"></script> 
+<script src="locations.js"></script>
 
 <meta charset="utf-8">
 <style>
@@ -104,7 +105,7 @@
 
     <!-- <p id="idSuntimeHeading" class="suntimeHeading">Sunrise/set times V1.6</p> -->
     <p id="idSuntimeHeading" class="suntimeHeading">.</p>
-    <p>Date: <input id="inputDate" type="date" >
+    <p>Date: <input id="inputDate" type="date">
         (Location selection:<select id="myselect">
             <option value="0">.</option>
         </select>
@@ -114,6 +115,7 @@
         <button onclick="drawSunData(this)">Apply</button>
         <button onclick="clearCoord()">Clear manual entries</button>
         <input id="inputDeltaMode" type="checkbox">DayLen/Delta</br>
+        <input id="inputHideDST" type="checkbox">Hide DST</br>
     </p>
     <p class="sunttimeZooms">
 
@@ -138,15 +140,15 @@
 
 
     <script>
-        const gcHeadSuntimes = "Sunrise/set times V1.6.3";
-        const gcHeadSuntimesDelta = "Sunrise/set times V1.6.3 - delta mode";
+        const gcHeadSuntimes = "Sunrise/set times V1.6.4";
+        const gcHeadSuntimesDelta = "Sunrise/set times V1.6.4 - delta mode";
     </script>
 
 
     <script>
         let gcScreenWidth = document.documentElement.clientWidth; //screen.width;
         var inactivityTime = function () {
-           
+
             var time;
             window.onload = resetTimer;
             // DOM Events
@@ -163,7 +165,7 @@
                 time = setTimeout(logout, 13000)
                 // 1000 milliseconds = 1 second
             }
-        
+
         };
 
 
@@ -172,6 +174,7 @@
         var maxSign = 1.0000000000001;
         var multip = 100;
         var deltaMode = 0;
+        var hideDSTMode = 0; // hide DST shift
         var slider = document.getElementById("dSpan");
         var output = document.getElementById("sliderValue");
         output.innerHTML = slider.value;
@@ -216,15 +219,17 @@
 
         // ***************** FUNCTIONS ***********************
 
-        function setDeltaMode() {
-            if (deltaMode) {
-                deltaMode = 0;
-            }
-            else {
-                deltaMode = 1;
-            }
+        // function setDeltaMode() {
+        //     if (deltaMode) {
+        //         deltaMode = 0;
+        //     }
+        //     else {
+        //         deltaMode = 1;
+        //     }
 
-        }
+        // }
+
+
         function clearCoord() {
             document.getElementById("inputLongitude").value = 0;
             document.getElementById("inputLatitude").value = 0;
@@ -232,7 +237,7 @@
         }
 
         function setDateforDisplay() {
-           // inactivityTime();
+            // inactivityTime();
             const today = new Date()
             const tomorrow = new Date(today)
             tomorrow.setDate(tomorrow.getDate() + 1)
@@ -313,11 +318,15 @@
         };
 
         function getTimeZoneShift(year, month, day) {
+
+            // 01032025 
+            if (hideDSTMode == 1) { return 0; }
+
+            //
             var oMarchSwitchDate = new switchDateFactory(year, 2);
             var sDay3 = oMarchSwitchDate.getMarchSunnday().getDate();
             var sMonth3 = oMarchSwitchDate.getMarchSunnday().getMonth();
-            //debugger;
-            //        var oOktoberSwitchDate = new switchDateFactory(year, 9);
+
             var sDay10 = oMarchSwitchDate.getOktoberSunnday().getDate();
             var sMonth10 = oMarchSwitchDate.getOktoberSunnday().getMonth();
 
@@ -351,12 +360,19 @@
         };
 
         function drawSunData(context) {
-
+            //01.03.2525 
+            if (document.getElementById("inputHideDST").checked == true) {
+                hideDSTMode = 1;
+            }
+            else { hideDSTMode = 0; }
+            //
             let oDate0 = new Date(document.getElementById("inputDate").value);
             let oYear = oDate0.getFullYear();
             let oMonth = oDate0.getMonth();
             oMonth = oMonth + 1;
             let oDay = oDate0.getDate();
+
+
 
             this.locationsJSON = locations;
 
@@ -425,15 +441,22 @@
 
 
             //            drawDataSet(oDate0, daysSpan, this, selectedOption, lvLongitude, lvLatitude, lvTimeZone, bySelection);
+            // 01032025 {
+            if (document.getElementById("inputHideDST").checked == true) {
+                hideDSTMode = 1;
+            }
+            else { hideDSTMode = 0; }
+            //}
+
             if (document.getElementById("inputDeltaMode").checked == true) {
-               
+
                 deltaMode = 1;
                 document.getElementById("idSuntimeHeading").innerHTML = gcHeadSuntimesDelta;
-                
+
             } else { deltaMode = 0; }
-               //document.getElementById('inputDeltaMode').setAttribute("enabled","enabled");
-              
-                document.getElementById("idSuntimeHeading").innerHTML = gcHeadSuntimes;
+            //document.getElementById('inputDeltaMode').setAttribute("enabled","enabled");
+
+            document.getElementById("idSuntimeHeading").innerHTML = gcHeadSuntimes;
             if (bySelection == true) {
                 document.getElementById('inputDeltaMode').disabled = false;
                 if (deltaMode == 0) {
@@ -452,11 +475,11 @@
                 //  d3.select("svg").remove(); // V1.6
                 deltaMode = 0;
                 document.getElementById("inputDeltaMode").checked = false;
-               // document.getElementById("inputDeltaMode").= false;
+                // document.getElementById("inputDeltaMode").= false;
                 document.getElementById('inputDeltaMode').disabled = true;
-                
+
                 drawDataSetM(oDate0, daysSpan, this, selectedOption, lvLongitude, lvLatitude, lvTimeZone, bySelection);
-               
+
 
             }
 
@@ -527,7 +550,7 @@
             d3.select("svg").remove();
 
             var margin = { top: 30, right: 15, bottom: 30, left: 20 },
-            
+
                 //width = 2000 - margin.left - margin.right,
                 width = gcScreenWidth - margin.left - margin.right,
                 //heightX = 400;
