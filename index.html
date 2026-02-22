@@ -7,6 +7,7 @@
 <!-- GPL by M.Karaskiewicz 2023 - V1.6.2 adaptive -->
 <!-- GPL by M.Karaskiewicz 2023 - V1.6.4 summer time checkbox - 01.03.2025-->
 <!-- GPL by M.Karaskiewicz 2023 - V1.6.5 better hint Text in HTML - 02.03.2025-->
+<!-- GPL by M.Karaskiewicz 2023 - V1.6.6 locations global + order coordinates-->
 
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
@@ -131,18 +132,18 @@
         <label for="other">Back.color</label>
         <input id="colorP" type="color" name="favcolor" value="#ff0000" onchange="setBodyCol()">
     </p>
-    <span id="coord" class="suntimeDisplay">Coordinates: </span>
-    <span id="timeZone" class="suntimeDisplay">Time Zone: </br></span>
     <span class="suntimeDisplay">Sunrise: </span><span id="sunrise" class="suntimeSunrise"> </span>
     <span class="suntimeDisplay">Sunset: </span><span id="sunset" class="suntimeSunset"> </span>
     <span class="suntimeDisplay">Day length: </span><span id="dayLen" class="suntimeDayLength"> </span>
     <span id="polarDay" class="suntimeDayLength"> </span>
+    <span id="coord" class="suntimeDisplay">Coordinates: </span>
+    <span id="timeZone" class="suntimeDisplay">Time Zone: </br></span>
 
 
 
     <script>
-        const gcHeadSuntimes = "Sunrise/set times V1.6.5";
-        const gcHeadSuntimesDelta = "Sunrise/set times V1.6.5 - day increment mode";
+        const gcHeadSuntimes = "Sunrise/set times V1.6.6";
+        const gcHeadSuntimesDelta = "Sunrise/set times V1.6.6 - day increment mode";
     </script>
 
 
@@ -408,8 +409,8 @@
             let dayLenDecimal = dayLen[0] + "." + dayLen[1];
             let polarDay = oLocation1.getPolarDay();
 
-            document.getElementById("coord").innerHTML = "Coordinates:" + lvLatitude + ", " + lvLongitude + ",";
-            document.getElementById("timeZone").innerHTML = "Timezone:" + lvTimeZone + ", ";
+            document.getElementById("coord").innerHTML = "Coordinates: " + lvLatitude + ", " + lvLongitude ;
+            document.getElementById("timeZone").innerHTML = "Timezone:" + lvTimeZone ;
             // document.getElementById("sunrise").innerHTML = PrefixSR + sunRise[0] + ":" + sunRise[1];
             // document.getElementById("sunset").innerHTML = PrefixSS + sunSet[0] + ":" + sunSet[1];
             // document.getElementById("dayLen").innerHTML = PrefixDD + dayLen[0] + ":" + dayLen[1];
